@@ -1,0 +1,4 @@
+# @error no-terminal bar baz
+foo = bar | baz | "var";
+bar = baz;
+baz = bar;

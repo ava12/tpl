@@ -1,0 +1,2 @@
+# @error char
+foo = "1" . ;

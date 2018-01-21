@@ -1,0 +1,2 @@
+# @error no-definition bar
+foo = bar;

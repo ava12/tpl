@@ -1,0 +1,19 @@
+# В грамматике ипользуются только лексемы, но не отдельные символы,
+# так что последовательности символов в кавычках - это названия лексем,
+# которые могут совпадать (а могут и не совпадать) с их текстовым представлением.
+
+# Первое правило описывает грамматику в целом, его имя не используется,
+# в итоговой грамматике оно заменяется на "0".
+
+bnf = definition, {definition};
+terminal = '*'; # "[^"]*"|'[^']*'
+nonterminal = 'N'; # [a-zA-Z_][a-zA-Z0-9_-]*
+definition = nonterminal, "=", list, ";";
+list = item, {",", item};
+item = variant, {"|", variant};
+variant = term | group;
+term = terminal | nonterminal;
+group = simple | optional | repeated;
+simple = "(", list, ")";
+optional = "[", list, "]";
+repeated = "{", list, "}";

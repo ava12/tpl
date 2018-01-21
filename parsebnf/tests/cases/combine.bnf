@@ -1,0 +1,69 @@
+# @result:
+#{
+# "p-p": [{"pp":1}, {"ppa":2}, {"ppb":false}],
+# "p-g": [{"pg":1}, {"pga":2}, {"pgb":3}, {"pgc":false}],
+# "p-a": [{"pa":1}, {"paa":2}, {"pab":false, "pac":false}],
+# "p-m": [{"pm":1}, {"pma":2}, {"pmb":false, "":false}],
+# "p-r": [{"pr":1}, {"pra":2}, {"prb":2, "":false}],
+#
+# "g-p": [{"gp":1}, {"gpa":3}, {"gpc":false}, {"gpb":2}],
+# "g-g": [{"gg":1}, {"gga":3}, {"ggc":4}, {"ggb":2}, {"ggd":false}],
+# "g-a": [{"ga":1}, {"gaa":3}, {"gac":false, "gad":false}, {"gab":2}],
+# "g-m": [{"gm":1}, {"gma":3}, {"gmc":false, "":false}, {"gmb":2}],
+# "g-r": [{"gr":1}, {"gra":3}, {"grc":2, "":false}, {"grb":2}],
+#
+# "a-p": [{"ap":1}, {"apa":2, "apb":2}, {"apc":false}],
+# "a-g": [{"ag":1}, {"aga":2, "agb":2}, {"agc":3}, {"agd":false}],
+# "a-a": [{"aa":1}, {"aaa":2, "aab":2}, {"aac":false, "aad":false}],
+# "a-m": [{"am":1}, {"ama":2, "amb":2}, {"amc":false, "":false}],
+# "a-r": [{"ar":1}, {"ara":2, "arb":2}, {"arc":2, "":false}],
+#
+# "m-p": [{"mp":1}, {"mpa":2, "":2}, {"mpb":false}],
+# "m-g": [{"mg":1}, {"mga":2, "":2}, {"mgb":3}, {"mgc":false}],
+# "m-a": [{"ma":1}, {"maa":2, "":2}, {"mab":false, "mac":false}],
+# "m-m": [{"mm":1}, {"mma":2, "":2}, {"mmb":false, "":false}],
+# "m-r": [{"mr":1}, {"mra":2, "":2}, {"mrb":2, "":false}],
+#
+# "r-p": [{"rp":1}, {"rpa":1, "":2}, {"rpb":false}],
+# "r-g": [{"rg":1}, {"rga":1, "":2}, {"rgb":3}, {"rgc":false}],
+# "r-a": [{"ra":1}, {"raa":1, "":2}, {"rab":false, "rac":false}],
+# "r-m": [{"rm":1}, {"rma":1, "":2}, {"rmb":false, "":false}],
+# "r-r": [{"rr":1}, {"rra":1, "":2}, {"rrb":2,"":false}]
+#}
+
+grammar =
+p-p | p-g | p-a | p-m | p-r |
+g-p | g-g | g-a | g-m | g-r |
+a-p | a-g | a-a | a-m | a-r |
+m-p | m-g | m-a | m-m | m-r |
+r-p | r-g | r-a | r-m | r-r ;
+
+p-p = "pp", "ppa", "ppb";
+p-g = "pg", "pga", ("pgb", "pgc");
+p-a = "pa", "paa", ("pab" | "pac");
+p-m = "pm", "pma", ["pmb"];
+p-r = "pr", "pra", {"prb"};
+
+g-p = "gp", ("gpa", "gpb"), "gpc";
+g-g = "gg", ("gga", "ggb"), ("ggc", "ggd");
+g-a = "ga", ("gaa", "gab"), ("gac" | "gad");
+g-m = "gm", ("gma", "gmb"), ["gmc"];
+g-r = "gr", ("gra", "grb"), {"grc"};
+
+a-p = "ap", ("apa" | "apb"), "apc";
+a-g = "ag", ("aga" | "agb"), ("agc", "agd");
+a-a = "aa", ("aaa" | "aab"), ("aac" | "aad");
+a-m = "am", ("ama" | "amb"), ["amc"];
+a-r = "ar", ("ara" | "arb"), {"arc"};
+
+m-p = "mp", ["mpa"], "mpb";
+m-g = "mg", ["mga"], ("mgb", "mgc");
+m-a = "ma", ["maa"], ("mab" | "mac");
+m-m = "mm", ["mma"], ["mmb"];
+m-r = "mr", ["mra"], {"mrb"};
+
+r-p = "rp", {"rpa"}, "rpb";
+r-g = "rg", {"rga"}, ("rgb", "rgc");
+r-a = "ra", {"raa"}, ("rab" | "rac");
+r-m = "rm", {"rma"}, ["rmb"];
+r-r = "rr", {"rra"}, {"rrb"};

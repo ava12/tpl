@@ -1,0 +1,85 @@
+tpl = {expression | flow-control};
+
+expression = definition | literal-expression | object-expression | compound-expression | block-expression | if-block | case-block | reference-expression | deref-expression | logic-expression;
+flow-control = "exit" | ("return", value);
+
+definition = variable | constant;
+literal-expression = literal-object;
+object-expression = object, [operation];
+compound-expression = compound-value;
+block-expression = for-block | foreach-block | do-block;
+reference-expression = reference;
+deref-expression = deref;
+logic-expression = logic-value;
+
+variable = "var", variable-spec | ("(", variable-spec, {",", variable-spec}, ")");
+constant = "define", var-name, ":", constant-value;
+literal-object = literal, {call | item | field};
+object = name, {call | item | field};
+operation = set | concat;
+literal = bool | number | string | list | function;
+compound-value = "{", {expression}, "}";
+for-block = "for", for-counter, ":", for-start, "to", for-end, ["step", for-step], "do", loop-body;
+foreach-block = "foreach", "(", each-object, [",", [each-value], [",", [each-key], [",", each-index]]], ")", "do", loop-body;
+do-block = "do", loop-body;
+if-block = "if", value, "then", if-body, [else-case];
+case-block = "case", case-value, "{", when-case, {when-case}, "}", [else-case];
+
+variable-spec = var-name, [":", constant-value];
+call = "(", [list-body], ")";
+item = "[", item-value, {",", item-value}, "]";
+field = ".", key;
+set = ":", value;
+concat = "::", value;
+name = "*";
+key = "*";
+bool = "true" | "false";
+number = "1";
+string = '"' | "'" | "%";
+list = "[[", [list-body], "]]";
+function = ["pure"], "function", "(", [arg-list], ")", "{", {expression | flow-control}, "}";
+for-counter = object;
+for-start = object | literal-object | compound-value;
+for-end = object | literal-object | compound-value;
+for-step = object | literal-object | compound-value;
+loop-body = loop-expression | ("{", {loop-expression}, "}");
+each-object = value;
+each-value = object;
+each-key = object;
+each-index = object;
+if-body = expression | flow-control;
+else-case = "else", (expression | flow-control);
+case-value = value;
+when-case = "when", (when-value | ("(", when-value, {",", when-value}, ")")), "then", when-body;
+
+constant-value = const-ref | const-object | const-compound;
+list-body = [list-element], {",", {","}, [list-element]};
+item-value = compound-value | object | literal-object;
+arg-list = arg-definition, {",", arg-definition};
+loop-expression = definition | literal-expression | object-expression | block-expression | loop-if-block | loop-case-block | reference-expression | deref-expression | loop-control;
+when-value = value;
+when-body = expression;
+
+const-ref = "@", (const-object | const-compound);
+const-object = object | literal-object;
+const-compound = compound-value;
+value = reference | deref | object | literal-object | compound-value | logic-value;
+list-element = pair | value;
+arg-definition = ["@"], var-name, [":", constant-value];
+loop-if-block = "if", value, "then", loop-if-body, [loop-else-case];
+loop-case-block = "case", value, "{", when-case, {when-case}, "}", [loop-else-case];
+loop-control = "continue" | "break" | ("while", value) | ("until", value);
+
+var-name = "*";
+reference = "@", value;
+deref = "$", value;
+logic-value = and-value | or-value;
+pair = ".", key | string | compound-value, [":"], value;
+loop-if-body = loop-body;
+loop-else-case = "else", loop-body;
+
+and-value = "and", "(", and-item, {",", and-item}, ")";
+or-value = "or", "(", or-item, {",", or-item}, ")";
+
+and-item = value;
+or-item = value;

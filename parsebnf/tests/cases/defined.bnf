@@ -1,0 +1,4 @@
+# @error defined bar
+foo = bar;
+bar = "baz";
+bar = "var";

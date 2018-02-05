@@ -50,19 +50,19 @@ assert('bye', function () {
   return 'bye'
 }())
 
-a: [[.who: 'world', .say: function () {
+a: [:.who: 'world', .say: function () {
   this.said: {
     'hello '
     this.who
   }
-}]]
+}:]
 a.say()
 assert('hello world', a.said)
 
-a: [[.anyName: function () {
+a: [:.anyName: function () {
   'hi '
   this.who
-}, .who: 'all']]
+}, .who: 'all':]
 assert('hi all', {'' a})
 
 a: '*'

@@ -16,7 +16,7 @@ assert(2, baz)
 
 var (a, b, c)
 
-a: [[2, @3]]
+a: [:2, @3:]
 b: a
 c: @a
 a[1]: 4

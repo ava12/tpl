@@ -29,8 +29,8 @@ class Token {
 	const TYPE_RSQUARE = ']';
 	const TYPE_LCURLY = '{';
 	const TYPE_RCURLY = '}';
-	const TYPE_LDOUBLE = '[[';
-	const TYPE_RDOUBLE = ']]';
+	const TYPE_LDOUBLE = '[:';
+	const TYPE_RDOUBLE = ':]';
 	const TYPE_TRUE = 'true';
 	const TYPE_FALSE = 'false';
 

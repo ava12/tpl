@@ -5,7 +5,7 @@ foo()
 
 \\:: 203
 var func
-func: function () { [[func]] }
+func: function () { [:func:] }
 '' func
 
 \\:: 204

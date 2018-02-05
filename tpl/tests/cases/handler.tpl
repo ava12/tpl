@@ -1,8 +1,8 @@
-var buffer: [[]]
+var buffer: [::]
 
 function (out) { buffer :: out }
 
 'hello'
-[[.who?: 'world']]
+[:.who?: 'world':]
 
-assert([['hello', .who?: 'world']], buffer)
+assert([:'hello', .who?: 'world':], buffer)

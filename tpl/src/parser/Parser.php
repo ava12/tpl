@@ -103,7 +103,7 @@ class Parser {
 
 	protected $stringHandlers = [];
 
-	// {нетерминал => [{лексема => [номер_состояния, нетерминал?]}+]}
+	// {нетерминал => [{лексема => номер_состояния|false|[номер_состояния|false, нетерминал]}+]}
 	protected $grammar;
 
 	protected $currentNonTerminal = 0;
@@ -116,7 +116,7 @@ class Parser {
 	/** @var null|\ava12\tpl\machine\Variable */
 	public $lastConstant;
 
-	// {нетерминал => имя_класса} (function($phase, $token))
+	// {нетерминал => имя_класса}
 	protected $nonTerminalHandlers = [
 		'and-value' => 'LogicHandler',
 		'arg-definition' => 'ArgHandler',

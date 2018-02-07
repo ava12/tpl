@@ -37,10 +37,7 @@ class VarDefHandler extends AbstractStateHandler {
 
 		$parser = $this->parser;
 		$value = $parser->lastConstant;
-		if ($this->isConst) {
-			$value->setIsConst();
-			if ($value->isRef()) $value->deref()->setIsConst();
-		}
+		if ($this->isConst) $value->setIsConst();
 		$this->addVar($this->name, $value);
 	}
 

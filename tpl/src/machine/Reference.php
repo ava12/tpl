@@ -16,6 +16,13 @@ class Reference extends Variable {
 		$this->newIndex();
 	}
 
+	public function setIsConst() {
+		if ($this->isConstant) return;
+
+		$this->isConstant = true;
+		$this->value->setIsConst();
+	}
+
 	public function deref() {
 		return $this->value;
 	}

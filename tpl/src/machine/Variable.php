@@ -45,8 +45,15 @@ class Variable {
 		return $this->isConstant;
 	}
 
-	public function setIsConst($is = true) {
-		$this->isConstant = $is;
+	public function setIsConst() {
+		if ($this->isConstant) return;
+
+		$this->isConstant = true;
+		if ($this->value->getType() == IValue::TYPE_LIST) {
+			for ($i = 1; $i <= $this->value->getCount(); $i++) {
+				$this->value->getByIndex($i)->setIsConst();
+			}
+		}
 	}
 
 	public function deref() {

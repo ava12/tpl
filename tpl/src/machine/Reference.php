@@ -32,7 +32,6 @@ class Reference extends Variable {
 	}
 
 	public function copy() {
-		if ($this->isConstant) return $this;
-		else return new static($this->value);
+		return new static($this->value);
 	}
 }

@@ -37,7 +37,7 @@ false
 [:2,:]
 [:1,,2:]
 [:,,1,,2,,:]
-[:1, .foo: 2, .'bar': 3, ."baz" 4, .%var% 5,:]
+[:1, .foo: 2, .'bar': 3, ."baz": 4, .%var%: 5,:]
 [:{'hello ' 1}, ord('a'), @chr(123), $chr(123):]
 
 pure function () {

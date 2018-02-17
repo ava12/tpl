@@ -73,5 +73,5 @@ assert('*/*', function (a) {
 }(a))
 assert('*', a)
 
-=(a, '+++')
+set(a, '+++')
 assert('+++', a)

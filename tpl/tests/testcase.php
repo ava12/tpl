@@ -25,6 +25,11 @@ define('NL', PHP_EOL);
 require_once '../autoload.php';
 require_once 'TestFunction.php';
 
+use \ava12\tpl\machine\Machine;
+use \ava12\tpl\parser\Parser;
+use \ava12\tpl\parser\Token;
+use \ava12\tpl\parser\MacroProcessor;
+
 $fileName = null;
 $encoding = null;
 
@@ -53,7 +58,7 @@ if (!$fileName) {
 	exit(1);
 }
 
-$source = file_get_contents($fileName);
+$source = @file_get_contents($fileName);
 if ($source === false) {
 	write(NL . 'Отсутствует файл теста' . NL);
 	exit(2);
@@ -80,11 +85,12 @@ if ($multiple) {
 foreach ($sources as $entry) {
 	$source = $entry[0];
 	$expectedError = $entry[1];
-	$machine = new \ava12\tpl\machine\Machine;
+	$machine = new Machine;
 	TestFunction::setup($machine);
-	$parser = new \ava12\tpl\parser\Parser($machine);
+	$parser = new Parser($machine);
 	$parser->pushSource($source, $entry[2]);
 	try {
+		$parser->setStringHandler(Token::TYPE_STRING_PERCENT, new MacroProcessor($machine));
 		$parser->parse();
 		$machine->run();
 

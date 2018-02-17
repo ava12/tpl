@@ -5,6 +5,7 @@ assert(-0.031, -3.1e-2)
 assert('"hi"all"', """hi""all""")
 assert("'hi'all'", '''hi''all''')
 assert("%hi%all%", %%%hi%%all%%%)
+assert('foo\bar\baz', %foo\\bar\baz%)
 
 assert({'hello' chr(10) chr(10) 'world'}, 'hello
 

@@ -1067,6 +1067,40 @@ return [
       '}' => false,
     ],
   ],
+  'meta' => [
+    0 => [
+      '\\{' => 1,
+    ],
+    1 => [
+      '' => 2,
+      'var' => [1,'expression'],
+      'define' => [1,'expression'],
+      'true' => [1,'expression'],
+      'false' => [1,'expression'],
+      '1' => [1,'expression'],
+      '"' => [1,'expression'],
+      '\'' => [1,'expression'],
+      '%' => [1,'expression'],
+      '[:' => [1,'expression'],
+      'pure' => [1,'expression'],
+      'function' => [1,'expression'],
+      '*' => [1,'expression'],
+      '{' => [1,'expression'],
+      'for' => [1,'expression'],
+      'foreach' => [1,'expression'],
+      'do' => [1,'expression'],
+      'if' => [1,'expression'],
+      'case' => [1,'expression'],
+      '@' => [1,'expression'],
+      '$' => [1,'expression'],
+      'and' => [1,'expression'],
+      'or' => [1,'expression'],
+      '\\{' => [1,'meta'],
+    ],
+    2 => [
+      '}\\' => false,
+    ],
+  ],
   'or-item' => [
     0 => [
       '@' => [false,'value'],
@@ -1117,7 +1151,6 @@ return [
       '{' => [2,'compound-value'],
     ],
     2 => [
-      '' => 3,
       ':' => 3,
     ],
     3 => [

@@ -13,7 +13,7 @@ class VarDefHandler extends AbstractStateHandler {
 	protected function addVar($name, $value = null) {
 		$funcDef = $this->parser->functionDef;
 		$index = $funcDef->addVar($name, $value);
-		if (!$funcDef->index) {
+		if ($funcDef->index === 0) {
 			$this->parser->machine->getRootContext()->addVar($index, $name, $value);
 		}
 		$this->name = null;

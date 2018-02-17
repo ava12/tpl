@@ -1,5 +1,7 @@
 tpl = {expression | flow-control};
 
+meta = "\{", {expression | meta}, "}\";
+
 expression = definition | literal-expression | object-expression | compound-expression | block-expression | if-block | case-block | reference-expression | deref-expression | logic-expression;
 flow-control = "exit" | ("return", value);
 
@@ -74,7 +76,7 @@ var-name = "*";
 reference = "@", value;
 deref = "$", value;
 logic-value = and-value | or-value;
-pair = ".", key | string | compound-value, [":"], value;
+pair = ".", key | string | compound-value, ":", value;
 loop-if-body = loop-body;
 loop-else-case = "else", loop-body;
 

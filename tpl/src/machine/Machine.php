@@ -216,11 +216,28 @@ class Machine {
 				$var = $this->toData($var, $nestLevel);
 			} else {
 				/** @var IListValue $var */
-				$var = $var->getByIndex(1);
+				$var = $var->getValue()->getByIndex(1);
 				if (!$var) $var = new Variable;
 			}
 		}
 		return $var;
+	}
+
+
+	public function toString(Variable $var) {
+		return $this->toScalar($var)->getValue()->asString();
+	}
+
+	public function toNumber(Variable $var) {
+		return $this->toScalar($var)->getValue()->asNumber();
+	}
+
+	public function toInt(Variable $var) {
+		return $this->toScalar($var)->getValue()->asInt();
+	}
+
+	public function toBool(Variable $var) {
+		return $this->toScalar($var)->getValue()->asBool();
 	}
 
 	protected function opToval() {

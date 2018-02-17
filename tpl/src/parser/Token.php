@@ -33,6 +33,8 @@ class Token {
 	const TYPE_RDOUBLE = ':]';
 	const TYPE_TRUE = 'true';
 	const TYPE_FALSE = 'false';
+	const TYPE_LMETA = '\\{';
+	const TYPE_RMETA = '}\\';
 
 
 	public function __construct($type, $value, $sourceId, $sourceName, $line, $column) {
@@ -48,17 +50,17 @@ class Token {
 	public static function getName($type) {
 		switch ($type) {
 			case self::TYPE_NUMBER:
-				return 'number';
+				return ':число:';
 			break;
 
 			case self::TYPE_STRING_SINGLE:
 			case self::TYPE_STRING_DOUBLE:
 			case self::TYPE_STRING_PERCENT:
-				return 'string';
+				return ':строка:';
 			break;
 
 			case self::TYPE_NAME:
-				return 'name';
+				return ':имя:';
 			break;
 
 			default:

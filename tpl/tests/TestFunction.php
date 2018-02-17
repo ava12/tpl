@@ -15,7 +15,7 @@ class TestFunction implements \ava12\tpl\machine\IFunctionValue {
 		'assert' => 'callAssert',
 		'chr' => 'callChr',
 		'ord' => 'callOrd',
-		'=' => 'callSet',
+		'set' => 'callSet',
 	];
 
 	protected static $pureFuncs = ['chr', 'ord'];

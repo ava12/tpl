@@ -101,12 +101,14 @@ class Parser {
 	/** @var null|Token */
 	protected $prevToken;
 
+	/** @var IStringProcessor[] */
 	protected $stringHandlers = [];
 
 	// {нетерминал => [{лексема => номер_состояния|false|[номер_состояния|false, нетерминал]}+]}
 	protected $grammar;
 
 	protected $currentNonTerminal = 0;
+	protected $currentStateIndex = 0;
 	/** @var null|AbstractStateHandler */
 	protected $nonTerminalHandler = null;
 	protected $currentState;
@@ -143,6 +145,7 @@ class Parser {
 		'literal-expression' => 'ObjectHandler',
 		'loop-control' => 'ControlHandler',
 		'loop-if-block' => 'IfHandler',
+		'meta' => 'MetaHandler',
 		'name' => 'NameHandler',
 		'number' => 'ScalarHandler',
 		'object-expression' => 'ObjectHandler',
@@ -173,10 +176,14 @@ class Parser {
 		$this->stringHandlers[$stringType] = $handler;
 	}
 
+	public function getStringHandler($stringType) {
+		return (isset($this->stringHandlers[$stringType]) ? $this->stringHandlers[$stringType] : null);
+	}
+
 	protected function processStringToken($token) {
 		$result = $token->value;
 		if (isset($this->stringHandlers[$token->type])) {
-			$result = $this->stringHandlers[$token->type]($token->type, $result);
+			$result = $this->stringHandlers[$token->type]->process($result, $token->type);
 		}
 		return $result;
 	}
@@ -251,13 +258,16 @@ class Parser {
 				if (!$token or !$token->type) break;
 
 				$tokenType = $token->type;
-				if (in_array($tokenType, $this->stringTypes)) {
-					$token->value = $this->processStringToken($token);
-				}
-
 				$matched = isset($currentState[$tokenType]);
 				if (!$matched and !isset($currentState[''])) {
-					throw new ParseException(ParseException::UNEXPECTED, Token::getName($tokenType), $token);
+					if ($tokenType <> Token::TYPE_LMETA) {
+						$params = [Token::getName($tokenType), Token::getName(array_keys($currentState)[0])];
+						throw new ParseException(ParseException::UNEXPECTED, $params, $token);
+					}
+
+					$this->pushState('meta', $this->currentStateIndex);
+					$this->putToken($token);
+					continue;
 				}
 
 				$entry = (array)$currentState[$matched ? $tokenType : ''];
@@ -276,12 +286,17 @@ class Parser {
 				}
 
 				if ($nextState === false) {
-					if (!$this->nonTerminalStack) {
-						throw new ParseException(ParseException::UNEXPECTED, Token::getName($tokenType), $token);
+					if ($this->nonTerminalStack) {
+						$this->popState();
+					} elseif ($tokenType == Token::TYPE_LMETA) {
+						$this->pushState('meta', $this->currentStateIndex);
+					} else {
+						$params = [Token::getName($tokenType), Token::getName(array_keys($currentState)[0])];
+						throw new ParseException(ParseException::UNEXPECTED, $params, $token);
 					}
 
-					$this->popState();
 				} else {
+					$this->currentStateIndex = $nextState;
 					$currentState = $this->grammar[$this->currentNonTerminal][$nextState];
 				}
 			}
@@ -330,6 +345,10 @@ class Parser {
 			$result->type = $result->value;
 		}
 
+		if (in_array($result->type, $this->stringTypes)) {
+			$result->value = $this->processStringToken($result);
+		}
+
 		$this->prevToken = $this->lastToken;
 		$this->lastToken = $result;
 		return $result;
@@ -344,6 +363,7 @@ class Parser {
 		$this->nonTerminalStack[] = [$this->currentNonTerminal, $stateIndex, $this->nonTerminalHandler];
 		$this->currentNonTerminal = $nonTerminal;
 		$this->nonTerminalHandler = null;
+		$this->currentStateIndex = 0;
 		$this->currentState = $this->grammar[$nonTerminal][0];
 		if (isset($this->nonTerminalHandlers[$nonTerminal])) {
 			$className = __NAMESPACE__ . '\\' . $this->nonTerminalHandlers[$nonTerminal];
@@ -379,6 +399,7 @@ class Parser {
 
 		} while ($stateIndex === false);
 
+		$this->currentStateIndex = $stateIndex;
 		$this->currentState = $this->grammar[$this->currentNonTerminal][$stateIndex];
 	}
 

@@ -17,6 +17,12 @@ var foo
 \\:: 106
 foo
 
+\\:: 106
+\{
+  var foo
+  \{ foo: 123 }\
+}\
+
 \\:: 107
 var foo
 pure function () { foo }
@@ -28,3 +34,12 @@ pure function (@ a) {}
 pure function () {
   function () {}
 }
+
+\\:: 110
+%foo\bar\baz%
+
+\\:: 110
+\{
+  macros:: [: .foo: 'bar' :]
+  %\foo\%
+}\

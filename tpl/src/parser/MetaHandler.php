@@ -2,7 +2,7 @@
 
 namespace ava12\tpl\parser;
 
-use \ava12\tpl\Machine\ExpressionDef;
+use \ava12\tpl\machine\ExpressionDef;
 
 class MetaHandler extends AbstractStateHandler {
 	protected $func;

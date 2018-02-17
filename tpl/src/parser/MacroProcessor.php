@@ -5,7 +5,7 @@ namespace ava12\tpl\parser;
 use \ava12\tpl\machine\AbstractFunctionDef;
 use \ava12\tpl\machine\IValue;
 use \ava12\tpl\machine\IFunctionValue;
-use \ava12\tpl\machine\IListValue;
+use ava12\tpl\machine\ListValue;
 use \ava12\tpl\machine\Variable;
 use \ava12\tpl\machine\Machine;
 
@@ -56,7 +56,7 @@ class MacroProcessor implements IStringProcessor, IFunctionValue {
 
 	public function call($context, $container = null, $args = null) {
 		if (!$args) return null;
-
+		/** @var ListValue $args */
 		$macros = $this->machine->toList($args->getByIndex(1))->getValue();
 		for ($i = 1; $i <= $macros->getCount(); $i++) {
 			$key = $macros->getKeyByIndex($i);

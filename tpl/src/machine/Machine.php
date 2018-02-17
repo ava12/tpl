@@ -215,7 +215,6 @@ class Machine {
 			if ($var->isCallable()) {
 				$var = $this->toData($var, $nestLevel);
 			} else {
-				/** @var IListValue $var */
 				$var = $var->getValue()->getByIndex(1);
 				if (!$var) $var = new Variable;
 			}

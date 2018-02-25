@@ -35,7 +35,7 @@ class Util {
 
 		$suffix = '';
 		$prefix = 0x80;
-		$headMask = 0x1f;
+		$headMask = 0x3f;
 		while ($code > $headMask) {
 			$suffix = chr(($code & 0x3f) | 0x80) . $suffix;
 			$code >>= 6;
@@ -65,7 +65,7 @@ class Util {
 
 		if ($prefix & $mask) throw static::makeException($char);
 
-		return $result | (($prefix & ($mask - 1)) << ($i * 6));
+		return $result | (($prefix & ($mask - 1)) << ((count($chars) - 1) * 6));
 	}
 
 	public static function substr($text, $start, $length = null) {

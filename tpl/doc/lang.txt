@@ -67,3 +67,63 @@
 
 метапрограмма:
   \( код )\
+
+
+стандартные функции:
+
+логические:
+  not(a)
+
+числа:
+  +(a, ...)
+  -(a), -(a, b)
+  *(a, ...)
+  /(a), /(a, b)
+  //(a, b)
+  ///(a, b)
+  **(a, b)
+  sum(l)
+  pro(l)
+  int(a)
+  frac(a)
+  ceil(a)
+  round(a)
+  ~(a)
+  |(a, ...)
+  &(a, ...)
+  ^(a, ...)
+  <<(a, length?)
+  >>(a, length?)
+
+строки:
+  chr(code, ...)
+  ord(s)
+  strlen(s)
+  substr(s, start, length?)
+  strsplice(@s, start, length, replace?)
+  strtr(s, from, to)
+
+списки:
+  count(l)
+  slice(l, start, length?)
+  splice(l, start, length?, replace?)
+  key(l, index)
+  index(l, key)
+  keys(l)
+  delete(l, key|index)
+  sort(l, func?)
+
+типы:
+  bool(a)
+  string(a)
+  list(a)
+  isset(a)
+  typeof(a) // "null"|"bool"|"number"|"string"|"list"|"function"
+
+сравнения:
+  ==(a, b)
+  <>(a, b)
+  <(a, b)
+  <=(a, b)
+  >(a, b)
+  >=(a,b)

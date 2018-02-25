@@ -1,0 +1,20 @@
+assert({}, ord(''))
+assert(68, ord('D'))
+assert(1041, ord('Б'))
+assert(68, ord('DБ'))
+
+assert({}, chr())
+assert('hi', chr(0x68, 0x69))
+assert('АБ', chr(1040, 1041))
+
+assert({}, strlen())
+assert(0, strlen(''))
+assert(2, strlen('DБ'))
+
+assert('foo', substr('foo', 1))
+assert('r', substr('bar', 0))
+assert('в', substr('абв', 0))
+assert('', substr('foo', 4, 1))
+assert('', substr('foo', 1, 0))
+assert('', substr('foo', 1, -1))
+assert('a', substr('bar', -1, 1))

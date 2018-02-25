@@ -40,7 +40,16 @@ class ScalarValue implements IScalarValue {
 		}
 	}
 
-	public function asInt() { return (int)((float)$this->value); }
+	public function asInt() {
+		$value = $this->value;
+		if (is_int($value)) return $value;
+
+		$value = (float)$this->value;
+		$result = (int)$value;
+		if ($result - 0.5 > $value) $result--;
+		return $result;
+	}
+
 	public function asString() { return (string)$this->value; }
 	public function getRawValue() { return $this->value; }
 }

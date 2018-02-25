@@ -29,6 +29,7 @@ use \ava12\tpl\machine\Machine;
 use \ava12\tpl\parser\Parser;
 use \ava12\tpl\parser\Token;
 use \ava12\tpl\parser\MacroProcessor;
+use \ava12\tpl\machine\StdLib;
 
 $fileName = null;
 $encoding = null;
@@ -86,6 +87,7 @@ foreach ($sources as $entry) {
 	$source = $entry[0];
 	$expectedError = $entry[1];
 	$machine = new Machine;
+	StdLib::setup($machine);
 	TestFunction::setup($machine);
 	$parser = new Parser($machine);
 	$parser->pushSource($source, $entry[2]);

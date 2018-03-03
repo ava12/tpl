@@ -69,7 +69,7 @@ class RunException extends \ava12\tpl\AbstractException {
 		$result = [];
 		$entry = $this->debugEntry;
 		while ($entry) {
-			$result[] = "  {$entry->functionName}[{$entry->functionIndex}:{$entry->chunkIndex}:{$entry->chunkIp}] ({$entry->sourceName} @ {$entry->line})" . PHP_EOL;
+			$result[] = "  {$entry->functionName}[{$entry->funcDef->index}:{$entry->chunkIndex}:{$entry->chunkIp}] ({$entry->sourceName} @ {$entry->line})" . PHP_EOL;
 			$entry = $entry->callerEntry;
 		}
 		return implode('', $result);

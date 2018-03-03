@@ -24,6 +24,3 @@ foo:: 3
 define foo: [:1,2:]
 var bar: @foo[2]
 bar: 3
-
-\\:: 205
-substr('foo')

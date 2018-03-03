@@ -54,7 +54,7 @@ else-case = "else", (expression | flow-control);
 case-value = value;
 when-case = "when", (when-value | ("(", when-value, {",", when-value}, ")")), "then", when-body;
 
-constant-value = const-ref | const-object | const-compound;
+constant-value = const-object | const-compound;
 list-body = [list-element], {",", {","}, [list-element]};
 item-value = compound-value | object | literal-object;
 arg-list = arg-definition, {",", arg-definition};
@@ -62,8 +62,7 @@ loop-expression = definition | literal-expression | object-expression | block-ex
 when-value = value;
 when-body = expression;
 
-const-ref = "@", (const-object | const-compound);
-const-object = object | literal-object;
+const-object = ["@"], (object | literal-object);
 const-compound = compound-value;
 value = reference | deref | object | literal-object | compound-value | logic-value;
 list-element = pair | value;

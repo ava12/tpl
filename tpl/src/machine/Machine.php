@@ -430,13 +430,13 @@ class Machine {
 
 	protected function opMkref() {
 		$item = $this->runContext->peek();
-		$item->value = $item->value->ref();
+		$this->runContext->poke(new StackItem($item->value->ref()));
 		return true;
 	}
 
 	protected function opDeref() {
 		$item = $this->runContext->peek();
-		$item->value = $item->value->deref();
+		$this->runContext->poke(new StackItem($item->value->deref()));
 		return true;
 	}
 
@@ -449,15 +449,10 @@ class Machine {
 
 	protected function opCat() {
 		$runContext = $this->runContext;
-		$var = $runContext->pop()->asVar();
+		$var = $runContext->pop()->value;
 		if ($var->isNull()) return true;
 
 		$target = $runContext->peek();
-		if ($target->type == StackItem::TYPE_NULL) {
-			$target->setVar($var->copy());
-			return true;
-		}
-
 		$targetVar = $target->value;
 		if ($targetVar->isConst() and !$targetVar->isCallable()) {
 			throw new RunException(RunException::SET_CONST);
@@ -465,7 +460,7 @@ class Machine {
 
 		switch ($targetVar->getType()) {
 			case IValue::TYPE_NULL:
-				$targetVar->setValue($var->getValue()->copy());
+				$target->setVar($var->copy());
 			break;
 
 			case IValue::TYPE_SCALAR:

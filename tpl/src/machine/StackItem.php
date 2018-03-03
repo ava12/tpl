@@ -87,7 +87,10 @@ class StackItem {
 	 */
 	public function setVar($var) {
 		$this->checkTarget($var->isRef());
-		if (!$this->container) return;
+		if (!$this->container) {
+			$this->value = $var;
+			return;
+		}
 
 		if ($this->type == self::TYPE_NULL) $this->fixNullTarget();
 		if ($this->container and isset($this->path)) {

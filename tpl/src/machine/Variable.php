@@ -50,8 +50,10 @@ class Variable {
 
 		$this->isConstant = true;
 		if ($this->value->getType() == IValue::TYPE_LIST) {
-			for ($i = 1; $i <= $this->value->getCount(); $i++) {
-				$this->value->getByIndex($i)->setIsConst();
+			/** @var IListValue $value */
+			$value = $this->value;
+			for ($i = 1; $i <= $value->getCount(); $i++) {
+				$value->getByIndex($i)->setIsConst();
 			}
 		}
 	}

@@ -91,36 +91,47 @@ foreach ($sources as $entry) {
 	TestFunction::setup($machine);
 	$parser = new Parser($machine);
 	$parser->pushSource($source, $entry[2]);
+	$gotError = 0;
+
 	try {
 		$parser->setStringHandler(Token::TYPE_STRING_PERCENT, new MacroProcessor($machine));
 		$parser->parse();
 		$machine->run();
 
 	} catch (\ava12\tpl\machine\RunException $e) {
-		if ($expectedError <> $e->getCode()) {
+		$gotError = $e->getCode();
+		if ($expectedError <> $gotError) {
 			write(NL . $e->getMessage() . NL . $e->formatDebugEntry());
 
 			$de = $e->getDebugEntry();
 			$errorIp = $de->chunkIp;
 			$ip = max(0, $errorIp - 7);
-			$code = array_slice($machine->getFunction($de->functionIndex)->getCodeChunk($de->chunkIndex)->code, $ip, 10, true);
-			foreach ($code as $ip => &$p) {
-				if (is_array($p)) $p = '[' . implode(',', $p) . ']';
-				if ($ip == $errorIp) $p = '>' . $p . '<';
+			if (isset($de->funcDef)) {
+				$code = array_slice($de->funcDef->getCodeChunk($de->chunkIndex)->code, $ip, 10, true);
+				foreach ($code as $ip => &$p) {
+					if (is_array($p)) $p = '[' . implode(',', $p) . ']';
+					if ($ip == $errorIp) $p = '>' . $p . '<';
+				}
+				write('код: ' . implode(', ', $code) . NL);
 			}
-			write('код: ' . implode(', ', $code) . NL);
 
 			exit(3);
 		}
 
 	} catch (\ava12\tpl\parser\ParseException $e) {
-		if ($expectedError <> $e->getCode()) {
+		$gotError = $e->getCode();
+		if ($expectedError <> $gotError) {
 			write(NL . $e->getMessage() . NL);
 			exit(3);
 		}
 
 	} catch (Exception $e) {
 		write(NL . $fileName . ': ' . NL . $e . NL);
+		exit(3);
+	}
+
+	if ($expectedError and !$gotError) {
+		write(NL . $entry[2] . ': ожидается ошибка ' . $expectedError . ', код выполнен без ошибок' . NL);
 		exit(3);
 	}
 

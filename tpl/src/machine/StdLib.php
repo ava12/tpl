@@ -5,14 +5,16 @@ namespace ava12\tpl\machine;
 use \ava12\tpl\Util;
 
 class StdLib {
-	protected static $defaultFunc = [1 => true, 2 => []];
+	protected static $defaultFunc = [1 => 0, 2 => true];
 
-	// {имя: [обработчик, чистая?, имена?]}
+	// {имя: [обработчик, имена|количество?, чистая?]}
 	protected static $funcs = [
 		'chr' => ['callChr'],
-		'ord' => ['callOrd'],
-		'substr' => ['callSubstr'],
-		'strlen' => ['callStrlen'],
+		'not' => ['callNot', 1],
+		'ord' => ['callOrd', 1],
+		'strlen' => ['callStrlen', 1],
+		'substr' => ['callSubstr', 3],
+		'trim' => ['callTrim', 1],
 	];
 
 	/** @var Machine */
@@ -34,13 +36,26 @@ class StdLib {
 		$mainFunc = $machine->getFunction();
 		foreach (static::$funcs as $name => $params) {
 			$params += static::$defaultFunc;
-			FunctionProxy::inject($mainFunc, $name, [$instance, $params[0]], $params[1], $params[2]);
+			if (is_array($params[1])) {
+				$cnt = count($params[1]);
+				$names = $params[1];
+			} else {
+				$cnt = (int)$params[1];
+				$names = [];
+			}
+			FunctionProxy::inject($mainFunc, $name, [$instance, $params[0]], $cnt, $params[2], $names);
 		}
+	}
+
+	// not(b)
+	public function callNot($args) {
+		return !$this->machine->toBool($args[0]);
 	}
 
 	// ord(строка): код Unicode первого символа строки
 	public function callOrd($args) {
-		if (!isset($args[0])) return null;
+		/** @var Variable[] $args */
+		if ($args[0]->isNull()) return null;
 
 		$char = $this->machine->toString($args[0]);
 		if (!strlen($char)) return null;
@@ -61,7 +76,8 @@ class StdLib {
 
 	// strlen(строка): длина строки (в символах)
 	public function callStrlen($args) {
-		if (!isset($args[0])) return null;
+		/** @var Variable[] $args */
+		if ($args[0]->isNull()) return null;
 
 		return mb_strlen($this->machine->toString($args[0]));
 	}
@@ -87,18 +103,22 @@ class StdLib {
 		}
 	}
 
-	/*
-		substr(строка, первый_индекс, длина?): подстрока
-	*/
+	//substr(строка, первый_индекс, длина?): подстрока
 	public function callSubstr($args) {
-		if (count($args) < 2) {
-			throw new RunException(RunException::WRONG_CALL, 'substr');
-		}
-
+		/** @var Variable[] $args */
 		$text = $this->machine->toString($args[0]);
 		$start = $this->machine->toInt($args[1]);
-		$len = (isset($args[2]) ? $this->machine->toInt($args[2]) : mb_strlen($text));
+		$len = ($args[2]->isNull() ? mb_strlen($text) : $this->machine->toInt($args[2]));
 		$this->fixItemRange(mb_strlen($text), $start, $len);
 		return ($len ? mb_substr($text, $start - 1, $len) : '');
+	}
+
+	// trim(строка)
+	public function callTrim($args) {
+		/** @var Variable[] $args */
+		if ($args[0]->isNull()) return null;
+
+		$re = "/^[ \x09\x0a\x0d\x0c\xc2\xa0]+|[ \x09\x0a\x0d\x0c\xc2\xa0]+\$/u";
+		return preg_replace($re, '', $this->machine->toString($args[0]));
 	}
 }

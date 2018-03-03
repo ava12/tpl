@@ -92,7 +92,7 @@ class RunContext {
 		$caller = ($this->parentContext ? $this->parentContext->getDebugEntry($sources) : null);
 		$info = $this->codeChunk->findDebugEntry($this->ip - 1);
 		$sourceName = $sources[$info['sourceId']];
-		return new DebugEntry($this->functionName, $sourceName, $info['line'], $caller, $this->functionDef->index, $this->codeChunk->index, $this->ip - 1);
+		return new DebugEntry($this->functionName, $sourceName, $info['line'], $caller, $this->functionDef, $this->codeChunk->index, $this->ip - 1);
 	}
 
 	public function pushCodeChunk($index) {

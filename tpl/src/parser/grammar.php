@@ -1440,27 +1440,9 @@ return [
       'or' => [false,'value'],
     ],
   ],
-  'const-ref' => [
-    0 => [
-      '@' => 1,
-    ],
-    1 => [
-      '*' => [false,'const-object'],
-      'true' => [false,'const-object'],
-      'false' => [false,'const-object'],
-      '1' => [false,'const-object'],
-      '"' => [false,'const-object'],
-      '\'' => [false,'const-object'],
-      '%' => [false,'const-object'],
-      '[:' => [false,'const-object'],
-      'pure' => [false,'const-object'],
-      'function' => [false,'const-object'],
-      '{' => [false,'const-compound'],
-    ],
-  ],
   'constant-value' => [
     0 => [
-      '@' => [false,'const-ref'],
+      '@' => [false,'const-object'],
       '*' => [false,'const-object'],
       'true' => [false,'const-object'],
       'false' => [false,'const-object'],
@@ -1586,6 +1568,10 @@ return [
   ],
   'const-object' => [
     0 => [
+      '' => 1,
+      '@' => 1,
+    ],
+    1 => [
       '*' => [false,'object'],
       'true' => [false,'literal-object'],
       'false' => [false,'literal-object'],

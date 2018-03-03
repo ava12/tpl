@@ -66,13 +66,22 @@
   define имя : значение
 
 метапрограмма:
-  \( код )\
+  \{ код }\
 
 
 стандартные функции:
 
 логические:
   not(a)
+
+строки:
+  chr(code, ...)
+  ord(s)
+  trim(s)
+  strlen(s)
+  substr(s, start, length?)
+  strtr(s, from, to)
+  strsplice(@s, start, length, replace?)
 
 числа:
   +(a, ...)
@@ -95,14 +104,6 @@
   <<(a, length?)
   >>(a, length?)
 
-строки:
-  chr(code, ...)
-  ord(s)
-  strlen(s)
-  substr(s, start, length?)
-  strsplice(@s, start, length, replace?)
-  strtr(s, from, to)
-
 списки:
   count(l)
   slice(l, start, length?)
@@ -119,6 +120,7 @@
   list(a)
   isset(a)
   typeof(a) // "null"|"bool"|"number"|"string"|"list"|"function"
+  const(a)
 
 сравнения:
   ==(a, b)

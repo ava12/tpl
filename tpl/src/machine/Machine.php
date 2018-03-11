@@ -200,7 +200,7 @@ class Machine {
 	 */
 	public function toList($var) {
 		if ($var->isCallable()) $var = $this->toData($var);
-		if (!$var->isContainer()) $var = new ListValue($var);
+		if (!$var->isContainer()) $var = new Variable(new ListValue($var));
 		return $var;
 	}
 

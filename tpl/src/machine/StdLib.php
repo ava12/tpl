@@ -2,6 +2,7 @@
 
 namespace ava12\tpl\machine;
 
+use ava12\tpl\AbstractException;
 use \ava12\tpl\Util;
 
 class StdLib {
@@ -9,10 +10,14 @@ class StdLib {
 
 	// {имя: [обработчик, имена|количество?, чистая?]}
 	protected static $funcs = [
+		'&&' => ['callAnd'],
+		'^^' => ['callXor'],
+		'||' => ['callOr'],
 		'chr' => ['callChr'],
+		'length' => ['callStrlen', 1],
 		'not' => ['callNot', 1],
 		'ord' => ['callOrd', 1],
-		'strlen' => ['callStrlen', 1],
+		'replace' => ['callReplace', 2],
 		'substr' => ['callSubstr', 3],
 		'trim' => ['callTrim', 1],
 	];
@@ -47,10 +52,59 @@ class StdLib {
 		}
 	}
 
+	/**
+	 * @param Variable[] $args
+	 * @param mixed $initial
+	 * @param callable $func (mixed function(mixed $a, ScalarValue $b))
+	 * @return mixed
+	 */
+	protected function reduceScalars($args, $initial, $func) {
+		$result = $initial;
+
+		try {
+			foreach ($args as $arg) {
+				$arg = $this->machine->toScalar($arg)->getValue();
+				$result = $func($result, $arg);
+			}
+
+		} catch (AbstractException $e) {
+			throw $e;
+
+		} catch (\Exception $e) {
+			throw new RunException(RunException::ARI);
+		}
+
+		return $result;
+	}
+
 	// not(b)
 	public function callNot($args) {
 		return !$this->machine->toBool($args[0]);
 	}
+
+	// &&(b, ...)
+	public function callAnd($args) {
+		if (!$args) return false;
+
+		return $this->reduceScalars($args, true, function ($a, ScalarValue $b) {
+			return ($a and $b->asBool());
+		});
+	}
+
+	// ||(b, ...)
+	public function callOr($args) {
+		return $this->reduceScalars($args, false, function ($a, ScalarValue $b) {
+			return ($a or $b->asBool());
+		});
+	}
+
+	// ^^(b, ...)
+	public function callXor($args) {
+		return $this->reduceScalars($args, false, function ($a, ScalarValue $b) {
+			return ($a xor $b->asBool());
+		});
+	}
+
 
 	// ord(строка): код Unicode первого символа строки
 	public function callOrd($args) {
@@ -120,5 +174,22 @@ class StdLib {
 
 		$re = "/^[ \x09\x0a\x0d\x0c\xc2\xa0]+|[ \x09\x0a\x0d\x0c\xc2\xa0]+\$/u";
 		return preg_replace($re, '', $this->machine->toString($args[0]));
+	}
+
+	// replace(s, pairs)
+	public function callReplace($args) {
+		/** @var Variable[] $args */
+		$result = $this->machine->toString($args[0]);
+		$pairs = $this->machine->toList($args[1])->getValue();
+		$filter = [];
+		for ($i = 1; $i <= $pairs->getCount(); $i++) {
+			$key = $pairs->getKeyByIndex($i);
+			if (strlen($key)) {
+				$filter[$key] = $this->machine->toString($pairs->getByIndex($i));
+			}
+		}
+
+		if ($filter) $result = strtr($result, $filter);
+		return $result;
 	}
 }

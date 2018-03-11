@@ -30,6 +30,7 @@ use \ava12\tpl\parser\Parser;
 use \ava12\tpl\parser\Token;
 use \ava12\tpl\parser\MacroProcessor;
 use \ava12\tpl\machine\StdLib;
+use \ava12\tpl\Util;
 
 $fileName = null;
 $encoding = null;
@@ -64,6 +65,8 @@ if ($source === false) {
 	write(NL . 'Отсутствует файл теста' . NL);
 	exit(2);
 }
+
+Util::handleErrors();
 
 $sources = [];
 $source = preg_replace('/\\r\\n?/', "\n", $source);

@@ -9,7 +9,7 @@ class RunException extends \ava12\tpl\AbstractException {
 	const CALL_DEPTH = 202;
 	const ITEM_DEPTH = 203;
 	const SET_CONST = 204;
-	const WRONG_CALL = 205;
+	const ARI = 205;
 
 	const WRONG_OP = 301;
 	const NO_CONTEXT = 302;
@@ -21,10 +21,8 @@ class RunException extends \ava12\tpl\AbstractException {
 	const STACK_TYPE = 308;
 	const STACK_EMPTY = 309;
 	const WRONG_CHUNK_TYPE = 310;
-	const WRONG_TEMPLATE = 311;
-
-
 	protected static $messages = [
+		self::ARI => 'арифметическая ошибка',
 		self::CALL_DEPTH => 'слишком большая глубина вызовов функций',
 		self::CUSTOM => '%s',
 		self::ITEM_DEPTH => 'слишком большая глубина преобразования типов',
@@ -38,11 +36,13 @@ class RunException extends \ava12\tpl\AbstractException {
 		self::STACK_FULL => 'стек операндов переполнен',
 		self::STACK_TYPE => 'некорректный тип элемента стека: %s',
 		self::VAR_TYPE => 'некорректный тип переменной: %s',
-		self::WRONG_CALL => 'некорректный вызов функции %s',
 		self::WRONG_CHUNK_TYPE => 'некорректный тип блока',
 		self::WRONG_OP => 'некорректный код операции',
 		self::WRONG_TEMPLATE => 'некорректный тип шаблона: %s',
 	];
+
+
+	const WRONG_TEMPLATE = 311;
 
 	/** @var DebugEntry $debugEntry */
 	protected $debugEntry;

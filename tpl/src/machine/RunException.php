@@ -22,7 +22,7 @@ class RunException extends \ava12\tpl\AbstractException {
 	const STACK_EMPTY = 309;
 	const WRONG_CHUNK_TYPE = 310;
 	protected static $messages = [
-		self::ARI => 'арифметическая ошибка',
+		self::ARI => 'арифметическая ошибка (%s)',
 		self::CALL_DEPTH => 'слишком большая глубина вызовов функций',
 		self::CUSTOM => '%s',
 		self::ITEM_DEPTH => 'слишком большая глубина преобразования типов',

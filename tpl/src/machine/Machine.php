@@ -649,10 +649,12 @@ class Machine {
 		$keyTarget = $runContext->pop();
 		$valueTarget = $runContext->pop();
 		$source = $runContext->pop()->asVar();
-		if (!$source->isContainer()) {
+		if ($source->isContainer()) {
+			$source = $source->getValue();
+		} else {
 			$source = new ListValue([$source]);
 		}
-		$iterator = new ListIterator($source, $valueTarget, $keyTarget, $indexTarget);
+		$iterator = $source->getIterator($valueTarget, $keyTarget, $indexTarget);
 		$runContext->pushLoopChunk($op[1], $iterator);
 		return true;
 	}

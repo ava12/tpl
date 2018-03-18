@@ -8,6 +8,10 @@ class ScalarValue implements IScalarValue {
 
 	public function __construct($value) {
 		if (!isset($value)) $value = '';
+		if (is_float($value) and !is_finite($value)) {
+			throw new RunException(RunException::ARI, 'NaN');
+		}
+
 		$this->value = $value;
 	}
 
@@ -44,9 +48,12 @@ class ScalarValue implements IScalarValue {
 		$value = $this->value;
 		if (is_int($value)) return $value;
 
-		$value = (float)$this->value;
-		$result = (int)$value;
-		if ($result - 0.5 > $value) $result--;
+		try {
+			$result = (int)$this->value;
+		} catch (\Exception $e) {
+			$data = [$e->getMessage(), $e->getFile(), $e->getLine()];
+			throw new RunException(RunException::ARI, $data);
+		}
 		return $result;
 	}
 

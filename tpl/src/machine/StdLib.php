@@ -10,16 +10,33 @@ class StdLib {
 
 	// {имя: [обработчик, имена|количество?, чистая?]}
 	protected static $funcs = [
-		'&&' => ['callAnd'],
-		'^^' => ['callXor'],
-		'||' => ['callOr'],
+		'&' => ['callAnd'],
+		'&&' => ['callBAnd'],
+		'*' => ['callMul'],
+		'**' => ['callPow', 2],
+		'+' => ['callAdd'],
+		'-' => ['callSub'],
+		'/' => ['callDiv'],
+		'<<' => ['callSal', 2],
+		'>>' => ['callSar', 2],
+		'^' => ['callXor'],
+		'^^' => ['callBXor'],
+		'ceil' => ['callCeil', 1],
 		'chr' => ['callChr'],
+		'div' => ['callIDiv', 2],
+		'floor' => ['callFloor', 1],
+		'int' => ['callInt', 1],
 		'length' => ['callStrlen', 1],
-		'not' => ['callNot', 1],
+		'mod' => ['callIMod', 2],
+		'not' => ['callBNot', 1],
 		'ord' => ['callOrd', 1],
 		'replace' => ['callReplace', 2],
+		'round' => ['callRound', 1],
 		'substr' => ['callSubstr', 3],
 		'trim' => ['callTrim', 1],
+		'|' => ['callOr'],
+		'||' => ['callBOr'],
+		'~' => ['callNot', 1],
 	];
 
 	/** @var Machine */
@@ -52,6 +69,13 @@ class StdLib {
 		}
 	}
 
+	protected function mapException($e) {
+		if ($e instanceof AbstractException) return $e;
+
+		$data = [$e->getMessage(), $e->getFile(), $e->getFile()];
+		return new RunException(RunException::ARI, $data);
+	}
+
 	/**
 	 * @param Variable[] $args
 	 * @param mixed $initial
@@ -65,25 +89,25 @@ class StdLib {
 			foreach ($args as $arg) {
 				$arg = $this->machine->toScalar($arg)->getValue();
 				$result = $func($result, $arg);
+				if (is_float($result) and !is_finite($result)) {
+					throw new RunException(RunException::ARI, 'NaN');
+				}
 			}
 
-		} catch (AbstractException $e) {
-			throw $e;
-
 		} catch (\Exception $e) {
-			throw new RunException(RunException::ARI);
+			throw $this->mapException($e);
 		}
 
 		return $result;
 	}
 
 	// not(b)
-	public function callNot($args) {
+	public function callBNot($args) {
 		return !$this->machine->toBool($args[0]);
 	}
 
 	// &&(b, ...)
-	public function callAnd($args) {
+	public function callBAnd($args) {
 		if (!$args) return false;
 
 		return $this->reduceScalars($args, true, function ($a, ScalarValue $b) {
@@ -92,17 +116,202 @@ class StdLib {
 	}
 
 	// ||(b, ...)
-	public function callOr($args) {
+	public function callBOr($args) {
 		return $this->reduceScalars($args, false, function ($a, ScalarValue $b) {
 			return ($a or $b->asBool());
 		});
 	}
 
 	// ^^(b, ...)
-	public function callXor($args) {
+	public function callBXor($args) {
 		return $this->reduceScalars($args, false, function ($a, ScalarValue $b) {
 			return ($a xor $b->asBool());
 		});
+	}
+
+
+	// +(n, ...)
+	public function callAdd($args) {
+		if (!$args) return null;
+
+		return $this->reduceScalars($args, 0, function ($a, ScalarValue $b) {
+			return ($a + $b->asNumber());
+		});
+	}
+
+	// -(a, b?)
+	public function callSub($args) {
+		/** @var Variable[] $args */
+		foreach ($args as $i => $arg) $args[$i] = $this->machine->toNumber($arg);
+		switch (count($args)) {
+			case 0:
+				return null;
+
+			case 1:
+				return (-$args[0]);
+
+			default:
+				return ($args[0] - $args[1]);
+		}
+	}
+
+	// *(n, ...)
+	public function callMul($args) {
+		if (!$args) return null;
+
+		return $this->reduceScalars($args, 1, function ($a, ScalarValue $b) {
+			return ($a * $b->asNumber());
+		});
+	}
+
+	// /(a, b?)
+	public function callDiv($args) {
+		/** @var Variable[] $args */
+		foreach ($args as $i => $arg) $args[$i] = $this->machine->toNumber($arg);
+		try {
+			switch (count($args)) {
+				case 0:
+					return null;
+
+				case 1:
+					return (1 / $args[0]);
+
+				default:
+					return ($args[0] / $args[1]);
+			}
+
+		} catch (\Exception $e) {
+			throw $this->mapException($e);
+		}
+	}
+
+	// div(a, b)
+	public function callIDiv($args) {
+		/** @var Variable[] $args */
+		$a = $this->machine->toInt($args[0]);
+		$b = $this->machine->toInt($args[1]);
+		try {
+			$rem = $a % $b;
+			return (int)(($a - $rem) / $b);
+		} catch (\Exception $e) {
+			throw $this->mapException($e);
+		}
+	}
+
+	// mod(a, b)
+	public function callIMod($args) {
+		/** @var Variable[] $args */
+		$a = $this->machine->toInt($args[0]);
+		$b = $this->machine->toInt($args[1]);
+		try {
+			return $a % $b;
+		} catch (\Exception $e) {
+			throw $this->mapException($e);
+		}
+	}
+
+	// **(a, b)
+	public function callPow($args) {
+		/** @var Variable[] $args */
+		$a = $this->machine->toNumber($args[0]);
+		$b = $this->machine->toNumber($args[1]);
+		try {
+			return pow($a, $b);
+		} catch (\Exception $e) {
+			throw $this->mapException($e);
+		}
+	}
+
+	// ~(i)
+	public function callNot($args) {
+		/** @var Variable[] $args */
+		return ~$this->machine->toInt($args[0]);
+	}
+
+	// &(i, ...)
+	public function callAnd($args) {
+		if (!$args) return null;
+
+		return $this->reduceScalars($args, -1, function ($a, ScalarValue $b) {
+			return ($a & $b->asInt());
+		});
+	}
+
+	// |(i, ...)
+	public function callOr($args) {
+		if (!$args) return null;
+
+		return $this->reduceScalars($args, 0, function ($a, ScalarValue $b) {
+			return ($a | $b->asInt());
+		});
+	}
+
+	// ^(i, ...)
+	public function callXor($args) {
+		if (!$args) return null;
+
+		return $this->reduceScalars($args, 0, function ($a, ScalarValue $b) {
+			return ($a ^ $b->asInt());
+		});
+	}
+
+	// <<(a, b?)
+	public function callSal($args) {
+		/** @var Variable[] $args */
+		$a = $this->machine->toInt($args[0]);
+		if ($args[1]->isNull()) $b = 1;
+		else $b = $this->machine->toInt($args[1]);
+		if ($b <= 0) return $a;
+
+		if ($b >= PHP_INT_SIZE * 8) return 0;
+
+		try {
+			return $a << $b;
+		} catch (\Exception $e) {
+			throw $this->mapException($e);
+		}
+	}
+
+	// >>(a, b?)
+	public function callSar($args) {
+		/** @var Variable[] $args */
+		$a = $this->machine->toInt($args[0]);
+		if ($args[1]->isNull()) $b = 1;
+		else $b = $this->machine->toInt($args[1]);
+		if ($b <= 0) return $a;
+
+		if ($b >= PHP_INT_SIZE * 8) return ($a >= 0 ? 0 : -1);
+
+		try {
+			return $a >> $b;
+		} catch (\Exception $e) {
+			throw $this->mapException($e);
+		}
+	}
+
+	// int(n)
+	// floor(n)
+	public function callInt($args) {
+		/** @var Variable[] $args */
+		return $this->machine->toInt($args[0]);
+	}
+
+	// round(n)
+	public function callRound($args) {
+		/** @var Variable[] $args */
+		return round($this->machine->toNumber($args[0]));
+	}
+
+	// floor(n)
+	public function callFloor($args) {
+		/** @var Variable[] $args */
+		return floor($this->machine->toNumber($args[0]));
+	}
+
+	// ceil(n)
+	public function callCeil($args) {
+		/** @var Variable[] $args */
+		return ceil($this->machine->toNumber($args[0]));
 	}
 
 
@@ -192,4 +401,5 @@ class StdLib {
 		if ($filter) $result = strtr($result, $filter);
 		return $result;
 	}
+
 }

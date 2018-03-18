@@ -77,14 +77,6 @@
   ||(a, ...)
   ^^(a, ...)
 
-строки:
-  chr(code, ...)
-  ord(s)
-  trim(s)
-  length(s)
-  substr(s, start, length?)
-  replace(s, pairs)
-
 числа:
   +(n, ...)
   -(n), -(a, b)
@@ -93,19 +85,24 @@
   div(a, b)
   mod(a, b)
   **(a, b)
-  sum(l)
-  pro(l)
+  ~(i)
+  &(i, ...)
+  |(i, ...)
+  ^(i, ...)
+  <<(n, length?)
+  >>(n, length?)
   int(n)
-  frac(n)
   round(n)
   floor(n)
   ceil(n)
-  ~(n)
-  |(n, ...)
-  &(n, ...)
-  ^(n, ...)
-  <<(n, length?)
-  >>(n, length?)
+
+строки:
+  chr(code, ...)
+  ord(s)
+  trim(s)
+  length(s)
+  substr(s, start, length?)
+  replace(s, pairs)
 
 списки:
   count(l)
@@ -123,7 +120,9 @@
 типы:
   isset(a)
   typeof(a) // "null"|"bool"|"number"|"string"|"list"|"function"
-  const(a)
+  number(a)
+  string(a)
+  list(a)
 
 сравнения:
   ==(a, b)
@@ -132,3 +131,7 @@
   <=(a, b)
   >(a, b)
   >=(a,b)
+
+прочее:
+  const(a)
+  call(func, args, container?)

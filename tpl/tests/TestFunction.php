@@ -54,7 +54,10 @@ class TestFunction {
 
 			case IValue::TYPE_SCALAR:
 				$value = $got->getRawValue();
-				if ($value !== $expected->getRawValue()) {
+				if (is_int($value)) $value = (float)$value;
+				$expectedValue = $expected->getRawValue();
+				if (is_int($expectedValue)) $expectedValue = (float)$expectedValue;
+				if ($value !== $expectedValue) {
 					static::fail(gettype($value) . '(' . print_r($value, true) . ')', $path);
 				}
 			break;

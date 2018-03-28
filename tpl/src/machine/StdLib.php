@@ -17,23 +17,38 @@ class StdLib {
 		'+' => ['callAdd'],
 		'-' => ['callSub'],
 		'/' => ['callDiv'],
+		'<' => ['callLt', 2],
 		'<<' => ['callSal', 2],
+		'<=' => ['callLe', 2],
+		'<>' => ['callNe', 2],
+		'==' => ['callEq', 2],
+		'>' => ['callGt', 2],
+		'>=' => ['callGe', 2],
 		'>>' => ['callSar', 2],
 		'^' => ['callXor'],
 		'^^' => ['callBXor'],
 		'ceil' => ['callCeil', 1],
 		'chr' => ['callChr'],
+		'combine' => ['callCombine', ['keys', 'values']],
+		'count' => ['callCount', 1],
 		'div' => ['callIDiv', 2],
 		'floor' => ['callFloor', 1],
+		'index' => ['callIndex', 2],
 		'int' => ['callInt', 1],
+		'key' => ['callKey', 2],
+		'keys' => ['callKeys', 1],
 		'length' => ['callStrlen', 1],
 		'mod' => ['callIMod', 2],
 		'not' => ['callBNot', 1],
 		'ord' => ['callOrd', 1],
 		'replace' => ['callReplace', 2],
 		'round' => ['callRound', 1],
+		'slice' => ['callSlice', ['l', 'start', 'count']],
+		'sort' => ['callSort', 2],
+		'splice' => ['callSplice', ['l', 'start', 'count', 'insert']],
 		'substr' => ['callSubstr', 3],
 		'trim' => ['callTrim', 1],
+		'values' => ['callValues', 1],
 		'|' => ['callOr'],
 		'||' => ['callBOr'],
 		'~' => ['callNot', 1],
@@ -101,6 +116,8 @@ class StdLib {
 		return $result;
 	}
 
+// - логика -------------------------------------------------------------------
+
 	// not(b)
 	public function callBNot($args) {
 		return !$this->machine->toBool($args[0]);
@@ -129,6 +146,7 @@ class StdLib {
 		});
 	}
 
+// - арифметика ---------------------------------------------------------------
 
 	// +(n, ...)
 	public function callAdd($args) {
@@ -314,6 +332,48 @@ class StdLib {
 		return ceil($this->machine->toNumber($args[0]));
 	}
 
+// - сравнения ----------------------------------------------------------------
+
+	// ==(a, b)
+	public function callEq($args) {
+		/** @var Variable[] $args */
+		$a = $this->machine->toScalar($args[0])->getValue();
+		$b = $this->machine->toScalar($args[1])->getValue();
+		if ($a->isString() or $b->isString()) {
+			return ($a->asString() === $b->asString());
+		} else {
+			return ($a->asNumber() == $b->asNumber());
+		}
+	}
+
+	// <>(a, b)
+	public function callNe($args) {
+		return !$this->callEq($args);
+	}
+
+	// >(a, b)
+	public function callGt($args) {
+		/** @var Variable[] $args */
+		return ($this->machine->toNumber($args[0]) > $this->machine->toNumber($args[1]));
+	}
+
+	// <=(a, b)
+	public function callLe($args) {
+		return !$this->callGt($args);
+	}
+
+	// >=(a, b)
+	public function callGe($args) {
+		/** @var Variable[] $args */
+		return ($this->machine->toNumber($args[0]) >= $this->machine->toNumber($args[1]));
+	}
+
+	// <(a, b)
+	public function callLt($args) {
+		return !$this->callGe($args);
+	}
+
+// - строки -------------------------------------------------------------------
 
 	// ord(строка): код Unicode первого символа строки
 	public function callOrd($args) {
@@ -401,5 +461,127 @@ class StdLib {
 		if ($filter) $result = strtr($result, $filter);
 		return $result;
 	}
+
+// - списки -------------------------------------------------------------------
+
+	// count(l)
+	public function callCount($args) {
+		/** @var Variable[] $args */
+		return $this->machine->toList($args[0])->getValue()->getCount();
+	}
+
+	// slice(l, start?, count?)
+	public function callSlice($args) {
+		/** @var Variable[] $args */
+		$list = $this->machine->toList($args[0])->getValue()->copy();
+		$start = ($args[1]->isNull() ? 1 : $this->machine->toInt($args[1]));
+		$count = ($args[2]->isNull() ? null : $this->machine->toInt($args[2]));
+		return new Variable($list->slice($start, $count));
+	}
+
+	// splice(l, start?, count?, insert?)
+	public function callSplice($args) {
+		/** @var Variable[] $args */
+		$list = $this->machine->toList($args[0])->getValue()->copy();
+		$start = ($args[1]->isNull() ? 1 : $this->machine->toInt($args[1]));
+		$count = ($args[2]->isNull() ? null : $this->machine->toInt($args[2]));
+		$insert = $this->machine->toList($args[3])->getValue();
+		return new Variable($list->splice($start, $count, $insert));
+	}
+
+	// key(l, index)
+	public function callKey($args) {
+		/** @var Variable[] $args */
+		$list = $this->machine->toList($args[0])->getValue();
+		$index = $this->machine->toScalar($args[1]);
+		if ($index->isNull()) return null;
+		else return $list->getKeyByIndex($index->getValue()->asInt());
+	}
+
+	// index(l, key)
+	public function callIndex($args) {
+		/** @var Variable[] $args */
+		$list = $this->machine->toList($args[0])->getValue();
+		$key = $this->machine->toString($args[1]);
+		return $list->getIndexByKey($key);
+	}
+
+	// keys(l)
+	public function callKeys($args) {
+		/** @var Variable[] $args */
+		$result = new ListValue;
+		$keys = $this->machine->toList($args[0])->getValue()->getKeys();
+		foreach ($keys as $v) {
+			$v = (isset($v) ? new ScalarValue($v) : NullValue::getValue());
+			$result->addItem(new Variable($v));
+		}
+		return new Variable($result);
+	}
+
+	// values(l)
+	public function callValues($args) {
+		/** @var Variable[] $args */
+		$list = $this->machine->toList($args[0])->getValue()->copy();
+		return new Variable(new ListValue($list->getValues()));
+	}
+
+	// combine(keys, values)
+	public function callCombine($args) {
+		/** @var Variable[] $args */
+		$keys = $this->machine->toList($args[0])->getValue()->getValues();
+		$values = $this->machine->toList($args[1])->getValue()->getValues();
+		$dcnt = count($values) - count($keys);
+		if ($dcnt) {
+			if ($dcnt > 0) $p = &$keys;
+			else $p = &$values;
+			for ($i = abs($dcnt); $i > 0; $i--) $p[] = new Variable;
+			unset($p);
+		}
+		$result = new ListValue;
+		foreach ($keys as $i => $k) {
+			$key = ($k->isNull() ? null : $this->machine->toString($k));
+			$result->addItem($values[$i]->copy(), $key);
+		}
+		return new Variable($result);
+	}
+
+	// sort(l, func?)
+	// func: (v1, v2, k1, k2, i1, i2)
+	public function callSort($args) {
+		/** @var Variable[] $args */
+		$callback = $args[1];
+		if ($callback->isNull()) {
+			$callback = $this->machine->getRootContext()->getByKey('-');
+		}
+
+		$list = $this->machine->toList($args[0])->copy();
+		$keys = $this->callKeys([$list])->getValue()->getValues();
+		$values = $list->getValue()->copy()->getValues();
+		$indexes = [];
+		for ($i = 1; $i <= count($values); $i++) {
+			$indexes[] = new Variable(new ScalarValue($i));
+		}
+
+		usort($indexes, function($a, $b) use ($keys, $values, $callback) {
+			$indexA = $a->getValue()->getRawValue() - 1;
+			$indexB = $b->getValue()->getRawValue() - 1;
+			$args = [$values[$indexA], $values[$indexB], $keys[$indexA], $keys[$indexB], $a, $b];
+			$result = $this->machine->callVar($callback, new ListValue($args));
+			$result = $this->machine->toNumber($result);
+			if (!$result) return 0;
+			else return ($result > 0 ? 1 : -1);
+		});
+
+		$result = new ListValue;
+		foreach ($indexes as $item) {
+			$index = $item->getValue()->getRawValue() - 1;
+			$result->addItem($values[$index], $keys[$index]->getValue()->getRawValue());
+		}
+
+		return new Variable($result);
+	}
+
+// - типы ---------------------------------------------------------------------
+// - прочее -------------------------------------------------------------------
 
 }

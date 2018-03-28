@@ -27,7 +27,7 @@ class Variable {
 
 
 	/**
-	 * @param IValue|Variable|null $value
+	 * @param IValue|null $value
 	 * @param bool $isConst
 	 */
 	public function __construct($value = null, $isConst = false) {

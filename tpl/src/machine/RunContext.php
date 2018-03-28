@@ -214,6 +214,10 @@ class RunContext {
 		return ($this->hasOutput ? $this->stack[0]->value : false);
 	}
 
+	public function setOutput($var) {
+		if ($this->hasOutput) $this->stack[0] = new StackItem($var);
+	}
+
 	public function continueLoop() {
 		while (!in_array($this->codeChunk->type, static::$blockTypes)) {
 			$this->dropCodeChunk();
@@ -263,5 +267,12 @@ class RunContext {
 		}
 
 		throw new RunException(RunException::NO_TEMPLATE);
+	}
+
+	public function finish() {
+		$this->codeChunk = null;
+		$this->chunkStack = [];
+		$this->iteratorStack = [];
+		$this->templateStack = [];
 	}
 }

@@ -162,6 +162,32 @@ class Machine {
 		return $result;
 	}
 
+	public function callVar($var, $args = null, $thisList = null) {
+		while ($var->isContainer()) {
+			$var = $var->getValue()->getByIndex(1);
+		}
+
+		if ($var->isFuncDef()) {
+			$var = new Variable(new Closure($var->getValue(), $this->runContext->context));
+		}
+
+		if (!$var->isCallable()) return $var;
+
+		$closure = $var->getValue();
+		if ($closure->func->getType() == IValue::TYPE_FUNCTION) {
+			$name = '[closure]';
+			$runContext = $this->runContext;
+			$context = new Context($closure->context, $closure->func, $thisList, $args);
+			$this->runContext = new RunContext($name, $context);
+			$result = $this->run();
+			$this->runContext = $runContext;
+		} else {
+			$result = $closure->func->call($closure->context, $thisList, $args);
+		}
+
+		return $result;
+	}
+
 	protected function nestDeeper(&$nestLevel) {
 		$nestLevel++;
 		if ($nestLevel > static::MAX_NEST_LEVEL) {
@@ -200,7 +226,7 @@ class Machine {
 	 */
 	public function toList($var) {
 		if ($var->isCallable()) $var = $this->toData($var);
-		if (!$var->isContainer()) $var = new Variable(new ListValue($var));
+		if (!$var->isContainer()) $var = new Variable(new ListValue);
 		return $var;
 	}
 
@@ -367,8 +393,15 @@ class Machine {
 
 		$this->runContext->pop();
 		$key = $keyVar->getValue();
-		if (!$key->isNumber()) $key = $key->asString();
-		else $key = $key->asInt();
+		if ($keyVar->isNull()) {
+			if ($container->isContainer()) $key = $container->getValue()->getCount() + 1;
+			else $key = ($container->isNull() ? 1 : 2);
+		} elseif (!$key->isNumber()) {
+			$key = $key->asString();
+		}
+		else {
+			$key = $key->asInt();
+		}
 
 		if ($stackContainer->type == StackItem::TYPE_NULL) {
 			$stackContainer->path[] = $key;
@@ -686,18 +719,15 @@ class Machine {
 		return $this->breakIf(true);
 	}
 
-	protected function exitFunction($result) {
-		$this->runContext = $this->runContext->parentContext;
-		$this->runContext->push(new StackItem($result));
+	protected function opExit() {
+		$this->runContext->finish();
 		return true;
 	}
 
-	protected function opExit() {
-		return $this->exitFunction($this->runContext->getOutput());
-	}
-
 	protected function opReturn() {
-		return $this->exitFunction($this->runContext->pop()->value);
+		$this->runContext->setOutput($this->runContext->peek()->value);
+		$this->runContext->finish();
+		return true;
 	}
 
 	protected function opDefault($op) {

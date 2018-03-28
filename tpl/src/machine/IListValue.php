@@ -19,4 +19,29 @@ interface IListValue extends IValue, IVarContainer {
 	 * @param Variable $var
 	 */
 	public function concat($var);
+
+	/**
+	 * @return array
+	 */
+	public function getKeys();
+
+	/**
+	 * @return Variable[]
+	 */
+	public function getValues();
+
+	/**
+	 * @param int|null $start
+	 * @param int|null $count
+	 * @return IListValue
+	 */
+	public function slice($start, $count);
+
+	/**
+	 * @param int|null $start
+	 * @param int|null $count
+	 * @param IListValue $insert
+	 * @return IListValue
+	 */
+	public function splice($start, $count, $insert);
 }

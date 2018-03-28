@@ -106,16 +106,14 @@
 
 списки:
   count(l)
-  slice(l, start, length?)
-  splice(l, start, length?, replace?)
+  slice(l, start?, count?)
+  splice(l, start?, count?, insert?)
   key(l, index)
   index(l, key)
   keys(l)
-  delete(l, key|index)
-  sort(l, func?)
+  values(l)
   combine(keys, values)
-  column(l, key?, id?)
-  fill(cnt, value?)
+  sort(l, func?)
 
 типы:
   isset(a)
@@ -123,6 +121,8 @@
   number(a)
   string(a)
   list(a)
+  data(a)
+  scalar(a)
 
 сравнения:
   ==(a, b)

@@ -7,7 +7,9 @@ class ListValue implements IListValue {
 	protected $className;
 
 	public function __construct($value = []) {
-		if (!is_array($value)) $value = [$value];
+		if (!is_array($value)) {
+			$value = ($value->isNull() ? [] : [$value]);
+		}
 		/** @var Variable[] $value */
 		$this->value = $value;
 		$this->className = get_class($this);
@@ -35,7 +37,7 @@ class ListValue implements IListValue {
 
 	protected function normalizeIndex($index) {
 		$count = count($this->value);
-		if ($index <= 0) $index = $count - $index;
+		if ($index <= 0) $index = $count + $index;
 		if ($index < 1 or $index > $count) return null;
 		else return ($index - 1);
 	}
@@ -44,7 +46,7 @@ class ListValue implements IListValue {
 		$key = static::encodeKey($key);
 		if (!array_key_exists($key, $this->value)) return null;
 
-		$result = array_search($key, array_keys($this->value));
+		$result = array_search($key, array_keys($this->value), true);
 		return ($result === false ? null : $result + 1);
 	}
 
@@ -137,7 +139,7 @@ class ListValue implements IListValue {
 	public function addItem($var, $key = null) {
 		if (isset($key)) {
 			$key = static::encodeKey($key);
-			if (!isset($this->value[$key]) or !$this->value[$key]->isConst) {
+			if (!isset($this->value[$key]) or !$this->value[$key]->isConst()) {
 				$this->value[$key] = $var;
 			}
 		} else {
@@ -145,5 +147,74 @@ class ListValue implements IListValue {
 		}
 	}
 
-	public function getRawValue() { return $this->value; }
+	public function getRawValue() {
+		return $this->value;
+	}
+
+	public function getKeys() {
+		$result = array_keys($this->value);
+		foreach ($result as $i => $k) {
+			$result[$i] = $this->decodeKey($k);
+		}
+		return $result;
+	}
+
+	public function getValues() {
+		return array_values($this->value);
+	}
+
+	protected function normalizeStartCount(&$start, &$count) {
+		$total = count($this->value);
+		if (!isset($start)) $start = 1;
+		if ($start > $total or (isset($count) and $count <= 0)) return false;
+
+		if ($start <= 0) $start += $total;
+		if (isset($count)) $end = $start + $count - 1;
+		else $end = $total;
+
+		if ($start < 1) $start = 1;
+		if ($end > $total) $end = $total;
+		if ($end < $start) return false;
+
+		$start--;
+		$count = $end - $start;
+		return true;
+	}
+
+	public function slice($start, $count) {
+		if (!$this->normalizeStartCount($start, $count)) return new ListValue;
+		else return new ListValue(array_slice($this->value, $start, $count));
+	}
+
+	public function splice($start, $count, $insert) {
+		if (isset($insert)) $insert = $insert->getRawValue();
+		else $insert = [];
+		if (!isset($count)) $count = count($insert);
+		if (!$this->normalizeStartCount($start, $count)) return $this;
+
+		$result = $this->value;
+		array_splice($result, $start, $count);
+
+		foreach(array_keys($insert) as $k) {
+			if (!is_numeric($k) and isset($result[$k])) {
+				$value = $insert[$k];
+				unset($insert[$k]);
+				$target = $result[$k];
+				if ($target->isConst() or (!$value->isRef() and $target->deref()->isConst())) {
+					continue;
+				}
+
+				$value = $value->copy();
+				if ($value->isRef()) $result[$k] = $value;
+				else $result[$k]->setValue($value->getValue());
+			}
+		}
+
+		$result = array_merge(
+			array_slice($result, 0, $start),
+			$insert,
+			array_slice($result, $start)
+		);
+		return new ListValue($result);
+	}
 }

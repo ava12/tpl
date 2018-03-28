@@ -22,6 +22,6 @@ class NullValue implements IScalarValue {
 	public function asBool() { return false; }
 	public function asNumber() { return 0; }
 	public function asInt() { return 0; }
-	public function asString() { return 0; }
+	public function asString() { return ''; }
 	public function concat($value) {}
 }

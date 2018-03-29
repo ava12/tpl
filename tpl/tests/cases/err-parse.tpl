@@ -40,6 +40,6 @@ pure function () {
 
 \\:: 110
 \{
-  macros:: [: .foo: 'bar' :]
+  macros:: (: .foo: 'bar' :)
   %\foo\%
 }\

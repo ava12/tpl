@@ -1,4 +1,4 @@
-var buffer: [::]
+var buffer: (::)
 
 function (out) { buffer :: out }
 

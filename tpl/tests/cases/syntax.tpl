@@ -26,19 +26,22 @@ false
 """hello "" '% world """
 %%%hello %% '" \\ world %%%
 
+var ~!$^&*-_=+|/?;<>
+
 {}
 ((..))
 {1 2 3}
 
 [::]
-(::::)
+(::)
 [:,,:]
 [:, 1:]
 [:2,:]
 [:1,,2:]
 [:,,1,,2,,:]
 [:1, .foo: 2, .'bar': 3, ."baz": 4, .%var%: 5,:]
-[:{'hello ' 1}, ord('a'), @chr(123), $chr(123):]
+[:{'hello ' 1}, ord('a'), @chr(123), #chr(123):]
+(::).(1, 2)
 
 pure function () {
   arg[1]
@@ -65,7 +68,7 @@ define foo: 789
 bar: bar(foo).baz[1]
 bar:: {foo bar baz}
 bar: @foo
-baz: $bar
+baz: #bar
 
 if foo then bar: baz
 if foo then bar

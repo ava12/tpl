@@ -59,10 +59,10 @@ a: [:.who: 'world', .say: function () {
 a.say()
 assert('hello world', a.said)
 
-a: [:.anyName: function () {
+a: (:.anyName: function () {
   'hi '
   this.who
-}, .who: 'all':]
+}, .who: 'all':)
 assert('hi all', {'' a})
 
 a: '*'

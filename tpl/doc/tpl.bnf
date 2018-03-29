@@ -29,8 +29,8 @@ case-block = "case", case-value, "{", when-case, {when-case}, "}", [else-case];
 
 variable-spec = var-name, [":", constant-value];
 call = "(", [list-body], ")";
-item = "[", item-value, {",", item-value}, "]";
-field = ".", key;
+item = "[", item-body, "]";
+field = ".", field-body | ("(", item-body, ")");
 set = ":", value;
 concat = "::", value;
 name = "*";
@@ -38,7 +38,7 @@ key = "*";
 bool = "true" | "false";
 number = "1";
 string = '"' | "'" | "%";
-list = "[:", [list-body], ":]";
+list = "(:", [list-body], ":)";
 function = ["pure"], "function", "(", [arg-list], ")", "{", {expression | flow-control}, "}";
 for-counter = object;
 for-start = object | literal-object | compound-value;
@@ -54,6 +54,8 @@ else-case = "else", (expression | flow-control);
 case-value = value;
 when-case = "when", (when-value | ("(", when-value, {",", when-value}, ")")), "then", when-body;
 
+item-body = item-value, {",", item-value};
+field-body = key;
 constant-value = const-object | const-compound;
 list-body = [list-element], {",", {","}, [list-element]};
 item-value = compound-value | object | literal-object;
@@ -73,7 +75,7 @@ loop-control = "continue" | "break" | ("while", value) | ("until", value);
 
 var-name = "*";
 reference = "@", value;
-deref = "$", value;
+deref = "#", value;
 logic-value = and-value | or-value;
 pair = ".", key | string | compound-value, ":", value;
 loop-if-body = loop-body;

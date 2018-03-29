@@ -14,7 +14,7 @@ class WrapHandler extends AbstractStateHandler {
 				$parser->emitOpChunk(Parser::OP_DO, Parser::CHUNK_TYPE_DO);
 			break;
 
-			case 'field':
+			case 'field-body':
 				$parser->emitOp(Parser::OP_TO_VALUE);
 			break;
 		}
@@ -33,7 +33,7 @@ class WrapHandler extends AbstractStateHandler {
 				$parser->endCodeChunk();
 			break;
 
-			case 'field':
+			case 'field-body':
 				$parser->emitOp(Parser::OP_ITEM);
 			break;
 

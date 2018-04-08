@@ -70,7 +70,7 @@
 стандартные функции:
 
 логические:
-  not(a)
+  ~~(a)
   &&(a, ...)
   ||(a, ...)
   ^^(a, ...)
@@ -116,9 +116,6 @@
 типы:
   isset(a)
   typeof(a) // "null"|"bool"|"number"|"string"|"list"|"function"
-  number(a)
-  string(a)
-  list(a)
   data(a)
   scalar(a)
 
@@ -129,9 +126,10 @@
   <=(a, b)
   >(a, b)
   >=(a, b)
-  
+
 прочее:
   const(a)
   isconst(a)
   isref(a)
-  call(func, args, container?)
+  call(func, args, @container?)
+  error(text?)

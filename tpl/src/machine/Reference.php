@@ -16,7 +16,8 @@ class Reference extends Variable {
 		$this->newIndex();
 	}
 
-	public function setIsConst() {
+	public function setIsConst($locked = false) {
+		$this->isLockedConstant = $locked;
 		if ($this->isConstant) return;
 
 		$this->isConstant = true;

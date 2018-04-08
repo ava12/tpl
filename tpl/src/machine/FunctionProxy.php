@@ -75,8 +75,9 @@ class FunctionProxy implements IFunctionValue {
 		$argArray = array_merge($argArray, $extraArgs);
 
 		$result = call_user_func($this->callback, $argArray, $container, $context, $this->param);
-		if (isset($result) and !is_object($result)) {
-			$result = new Variable(new ScalarValue($result));
+		if (isset($result)) {
+			if (is_object($result)) $result = $result->copy();
+			else $result = new Variable(new ScalarValue($result));
 		}
 		return $result;
 	}

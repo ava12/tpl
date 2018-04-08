@@ -1,3 +1,6 @@
+\\:: 200
+error('test')
+
 \\:: 202
 var foo
 foo: function() { '*' foo}

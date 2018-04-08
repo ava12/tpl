@@ -116,6 +116,7 @@ class Context implements IVarContainer {
 			else {
 				$value = $var->getValue();
 				$this->vars[$index]->deref()->setValue($value);
+				if ($var->isConst()) $this->vars[$index]->setIsConst();
 			}
 		}
 	}

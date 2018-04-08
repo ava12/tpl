@@ -162,7 +162,13 @@ class Machine {
 		return $result;
 	}
 
-	public function callVar($var, $args = null, $thisList = null) {
+	/**
+	 * @param Variable $var
+	 * @param IListValue|null $args
+	 * @param Variable|null $thisVar
+	 * @return Variable
+	 */
+	public function callVar($var, $args = null, $thisVar = null) {
 		while ($var->isContainer()) {
 			$var = $var->getValue()->getByIndex(1);
 		}
@@ -177,11 +183,12 @@ class Machine {
 		if ($closure->func->getType() == IValue::TYPE_FUNCTION) {
 			$name = '[closure]';
 			$runContext = $this->runContext;
-			$context = new Context($closure->context, $closure->func, $thisList, $args);
+			$context = new Context($closure->context, $closure->func, $thisVar, $args);
 			$this->runContext = new RunContext($name, $context);
 			$result = $this->run();
 			$this->runContext = $runContext;
 		} else {
+			$thisList = ($thisVar ? $thisVar->getValue() : null);
 			$result = $closure->func->call($closure->context, $thisList, $args);
 		}
 
@@ -226,7 +233,7 @@ class Machine {
 	 */
 	public function toList($var) {
 		if ($var->isCallable()) $var = $this->toData($var);
-		if (!$var->isContainer()) $var = new Variable(new ListValue);
+		if (!$var->isContainer()) $var = new Variable(new ListValue($var));
 		return $var;
 	}
 

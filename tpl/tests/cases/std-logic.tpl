@@ -1,6 +1,6 @@
-assert(true, not())
-assert(true, not(false))
-assert(false, not(true))
+assert(true, ~~())
+assert(true, ~~(false))
+assert(false, ~~(true))
 
 assert(false, &&())
 assert(false, &&(false, false))

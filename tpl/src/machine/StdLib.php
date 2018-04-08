@@ -27,27 +27,36 @@ class StdLib {
 		'>>' => ['callSar', 2],
 		'^' => ['callXor'],
 		'^^' => ['callBXor'],
+		'~~' => ['callBNot', 1],
+		'call' => ['callCall', ['func', 'args', 'container']],
 		'ceil' => ['callCeil', 1],
 		'chr' => ['callChr'],
 		'combine' => ['callCombine', ['keys', 'values']],
+		'const' => ['callConst', 1],
 		'count' => ['callCount', 1],
+		'data' => ['callData', 1],
 		'div' => ['callIDiv', 2],
+		'error' => ['callError', 1],
 		'floor' => ['callFloor', 1],
 		'index' => ['callIndex', 2],
 		'int' => ['callInt', 1],
+		'isconst' => ['callIsconst', 1],
+		'isref' => ['callIsref', 1],
+		'isset' => ['callIsset', 1],
 		'key' => ['callKey', 2],
 		'keys' => ['callKeys', 1],
 		'length' => ['callStrlen', 1],
 		'mod' => ['callIMod', 2],
-		'not' => ['callBNot', 1],
 		'ord' => ['callOrd', 1],
 		'replace' => ['callReplace', 2],
 		'round' => ['callRound', 1],
+		'scalar' => ['callScalar', 1],
 		'slice' => ['callSlice', ['l', 'start', 'count']],
 		'sort' => ['callSort', 2],
 		'splice' => ['callSplice', ['l', 'start', 'count', 'insert']],
 		'substr' => ['callSubstr', 3],
 		'trim' => ['callTrim', 1],
+		'typeof' => ['callTypeof', 1],
 		'values' => ['callValues', 1],
 		'|' => ['callOr'],
 		'||' => ['callBOr'],
@@ -103,6 +112,7 @@ class StdLib {
 		try {
 			foreach ($args as $arg) {
 				$arg = $this->machine->toScalar($arg)->getValue();
+				if ($arg->getType() == IValue::TYPE_NULL) $arg = new ScalarValue(false);
 				$result = $func($result, $arg);
 				if (is_float($result) and !is_finite($result)) {
 					throw new RunException(RunException::ARI, 'NaN');
@@ -582,6 +592,87 @@ class StdLib {
 	}
 
 // - типы ---------------------------------------------------------------------
-// - прочее -------------------------------------------------------------------
 
+	// isset(a)
+	public function callIsset($args) {
+		/** @var Variable[] $args */
+		return !$args[0]->isNull();
+	}
+
+	// typeof(a)
+	public function callTypeof($args) {
+		/** @var Variable[] $args */
+		$value = $args[0]->getValue();
+		$type = $value->getType();
+		switch ($type) {
+			case IValue::TYPE_NULL:
+				return 'null';
+
+			case IValue::TYPE_LIST:
+				return 'list';
+
+			case IValue::TYPE_FUNCTION:
+			case IValue::TYPE_FUNCTION_OBJ:
+			case IValue::TYPE_CLOSURE:
+				return 'function';
+
+			case IValue::TYPE_SCALAR:
+				if ($value->isBool()) return 'bool';
+				if ($value->isNumber()) return 'number';
+				if ($value->isString()) return 'string';
+
+				throw new \RuntimeException('неизвестный скалярный тип: ' . gettype($value->getRawValue()));
+
+			default:
+				throw new \RuntimeException("неизвестный тип значения: \"$type\"");
+		}
+	}
+
+	// data(a)
+	public function callData($args) {
+		/** @var Variable[] $args */
+		return $this->machine->toData($args[0]);
+	}
+
+	// scalar(a)
+	public function callScalar($args) {
+		/** @var Variable[] $args */
+		return $this->machine->toScalar($args[0]);
+	}
+
+// - прочее -------------------------------------------------------------------
+	// const(a)
+	public function callConst($args) {
+		/** @var Variable[] $args */
+		$result = $args[0]->copy();
+		$result->setIsConst(true);
+		return $result;
+	}
+
+	// isconst(a)
+	public function callIsconst($args) {
+		/** @var Variable[] $args */
+		return $args[0]->isConst();
+	}
+
+	// isref(a)
+	public function callIsref($args) {
+		/** @var Variable[] $args */
+		return $args[0]->isRef();
+	}
+
+	// call(func, args, @container)
+	public function callCall($args) {
+		/** @var Variable[] $args */
+		$argList = $this->machine->toList($args[1])->getValue();
+		$thisVar = ($args[2]->isNull() ? null : $this->machine->toList($args[2]->copy()));
+		return $this->machine->callVar($args[0], $argList, $thisVar);
+	}
+
+	// error(text)
+	public function callError($args) {
+		/** @var Variable[] $args */
+		$text = $this->machine->toString($args[0]);
+		throw new RunException(RunException::CUSTOM, $text);
+	}
 }

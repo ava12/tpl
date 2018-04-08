@@ -24,7 +24,7 @@ class Variable {
 	protected $value = null;
 	protected $isReference = false;
 	protected $isConstant = false;
-
+	protected $isLockedConstant = false;
 
 	/**
 	 * @param IValue|null $value
@@ -45,7 +45,8 @@ class Variable {
 		return $this->isConstant;
 	}
 
-	public function setIsConst() {
+	public function setIsConst($locked = false) {
+		$this->isLockedConstant = $locked;
 		if ($this->isConstant) return;
 
 		$this->isConstant = true;
@@ -97,7 +98,9 @@ class Variable {
 	public function copy() {
 		$value = $this->value;
 		if (!$this->isConstant) $value = $value->copy();
-		return new static($value);
+		$result = new static($value);
+		if ($this->isLockedConstant) $result->setIsConst(true);
+		return $result;
 	}
 
 	public function isNull() {

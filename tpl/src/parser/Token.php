@@ -15,6 +15,7 @@ class Token {
 	const TYPE_NAME = '*';
 	const TYPE_NUMBER = '1';
 	const TYPE_DOT = '.';
+	const TYPE_DDOT = '..';
 	const TYPE_SET = ':';
 	const TYPE_APPEND = '::';
 	const TYPE_REF = '@';

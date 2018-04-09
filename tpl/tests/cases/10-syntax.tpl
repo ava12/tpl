@@ -81,8 +81,8 @@ do {
   until baz
 }
 
-for bar: 1 to 10 do "*"
-for bar: 10 to 1 step -2 do {
+for bar: 1 .. 10 do "*"
+for bar: 10..1,-2 do {
   "+"
 }
 

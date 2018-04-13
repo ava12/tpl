@@ -70,10 +70,10 @@ assert([::], sort([::]))
 assert([: 1, 1, 2, 3, 4, 5, 6, 9 :], sort([: 3, 1, 4, 1, 5, 9, 2, 6 :]))
 
 foo: [: 2, 7, [:1, 1:], .b: 8, 2, .a: 8, [:1, 2:], .c: 8 :]
-bar: [: [:1, 1:], [:1, 2:], 2, 2, 7, .a: 8, .b: 8, .c: 8 :]
+bar: [: .a: 8, .b: 8, .c: 8, 7, 2, 2, [:1, 1:], [:1, 2:] :]
 var func: pure function(v1, v2, k1, k2, i1, i2) {
   var result
-  result: -(v1, v2)
+  result: -(v2, v1)
   if result then return result
 
   result: -(ord(k1), ord(k2))

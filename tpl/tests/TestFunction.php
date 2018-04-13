@@ -7,6 +7,7 @@ use \ava12\tpl\machine\RunException;
 use \ava12\tpl\machine\Closure;
 use \ava12\tpl\machine\NullValue;
 use \ava12\tpl\machine\FunctionProxy;
+use \ava12\tpl\Util;
 
 class TestFunction {
 	protected static $funcs = [
@@ -37,7 +38,7 @@ class TestFunction {
 	 * @param array $path
 	 */
 	protected static function compare($expected, $got, $path = []) {
-		if ($expected->isRef() <> $got->isRef()) {
+		if ($expected->isRef() xor $got->isRef()) {
 			static::fail($got->isRef() ? 'ссылка' : 'значение', $path);
 		}
 
@@ -54,10 +55,8 @@ class TestFunction {
 
 			case IValue::TYPE_SCALAR:
 				$value = $got->getRawValue();
-				if (is_int($value)) $value = (float)$value;
 				$expectedValue = $expected->getRawValue();
-				if (is_int($expectedValue)) $expectedValue = (float)$expectedValue;
-				if ($value !== $expectedValue) {
+				if (!Util::compareScalars($value, $expectedValue)) {
 					static::fail(gettype($value) . '(' . print_r($value, true) . ')', $path);
 				}
 			break;

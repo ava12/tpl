@@ -16,12 +16,12 @@ class Reference extends Variable {
 		$this->newIndex();
 	}
 
-	public function setIsConst($locked = false) {
-		$this->isLockedConstant = $locked;
-		if ($this->isConstant) return;
+	public function setIsConst() {
+		if ($this->isConstant) return $this;
 
 		$this->isConstant = true;
 		$this->value->setIsConst();
+		return $this;
 	}
 
 	public function deref() {

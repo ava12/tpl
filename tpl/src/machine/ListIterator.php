@@ -33,7 +33,7 @@ class ListIterator implements IIterator {
 
 		$key = $this->list->getKeyByIndex($this->index);
 		$keyValue = (isset($key) ? new ScalarValue($key) : NullValue::getValue());
-		$this->valueTarget->setVar($var);
+		$this->valueTarget->setVar($var->deref()->copy());
 		$this->indexTarget->setVar(new Variable(new ScalarValue($this->index)));
 		$this->keyTarget->setVar(new Variable($keyValue));
 		$this->index++;

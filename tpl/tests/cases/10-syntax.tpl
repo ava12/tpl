@@ -70,7 +70,7 @@ bar:: {foo bar baz}
 bar: @foo
 baz: #bar
 
-if foo then bar: baz
+if foo then bar: @baz
 if foo then bar
 else {foo bar baz}
 

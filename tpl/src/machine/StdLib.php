@@ -32,7 +32,6 @@ class StdLib {
 		'ceil' => ['callCeil', 1],
 		'chr' => ['callChr'],
 		'combine' => ['callCombine', ['keys', 'values']],
-		'const' => ['callConst', 1],
 		'count' => ['callCount', 1],
 		'data' => ['callData', 1],
 		'div' => ['callIDiv', 2],
@@ -347,13 +346,9 @@ class StdLib {
 	// ==(a, b)
 	public function callEq($args) {
 		/** @var Variable[] $args */
-		$a = $this->machine->toScalar($args[0])->getValue();
-		$b = $this->machine->toScalar($args[1])->getValue();
-		if ($a->isString() or $b->isString()) {
-			return ($a->asString() === $b->asString());
-		} else {
-			return ($a->asNumber() == $b->asNumber());
-		}
+		$a = $this->machine->toScalar($args[0])->getValue()->getRawValue();
+		$b = $this->machine->toScalar($args[1])->getValue()->getRawValue();
+		return Util::compareScalars($a, $b);
 	}
 
 	// <>(a, b)
@@ -364,7 +359,9 @@ class StdLib {
 	// >(a, b)
 	public function callGt($args) {
 		/** @var Variable[] $args */
-		return ($this->machine->toNumber($args[0]) > $this->machine->toNumber($args[1]));
+		$a = $this->machine->toNumber($args[0]);
+		$b = $this->machine->toNumber($args[1]);
+		return (Util::compareFloats($a, $b) > 0);
 	}
 
 	// <=(a, b)
@@ -375,7 +372,9 @@ class StdLib {
 	// >=(a, b)
 	public function callGe($args) {
 		/** @var Variable[] $args */
-		return ($this->machine->toNumber($args[0]) >= $this->machine->toNumber($args[1]));
+		$a = $this->machine->toNumber($args[0]);
+		$b = $this->machine->toNumber($args[1]);
+		return (Util::compareFloats($a, $b) >= 0);
 	}
 
 	// <(a, b)
@@ -641,18 +640,11 @@ class StdLib {
 	}
 
 // - прочее -------------------------------------------------------------------
-	// const(a)
-	public function callConst($args) {
-		/** @var Variable[] $args */
-		$result = $args[0]->copy();
-		$result->setIsConst(true);
-		return $result;
-	}
 
-	// isconst(a)
+	// isconst(@a)
 	public function callIsconst($args) {
 		/** @var Variable[] $args */
-		return $args[0]->isConst();
+		return $args[0]->deref()->isConst();
 	}
 
 	// isref(a)

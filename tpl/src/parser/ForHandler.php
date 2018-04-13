@@ -18,7 +18,7 @@ class ForHandler extends AbstractStateHandler {
 				$this->hasStep = true;
 			case 'for-start':
 			case 'for-end':
-				$this->parser->emitOp(Parser::OP_TO_INT);
+				$this->parser->emitOp(Parser::OP_TO_NUMBER);
 			break;
 		}
 	}

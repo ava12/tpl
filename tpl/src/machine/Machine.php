@@ -79,17 +79,9 @@ class Machine {
 		if (is_array($op)) {
 			$opName = $op[0];
 			$handler = 'op' . ucfirst($opName);
-			try {
-				$runContext = $this->runContext;
-				if (!$this->$handler($op)) {
-					$runContext->stepBack();
-				}
-			} catch (RunException $e) {
-				if (!$e->getDebugEntry()) {
-					$debugEntry = $this->runContext->getDebugEntry($this->sources);
-					$e->setDebugEntry($debugEntry);
-				}
-				throw $e;
+			$runContext = $this->runContext;
+			if (!$this->$handler($op)) {
+				$runContext->stepBack();
 			}
 
 		} else {
@@ -112,19 +104,27 @@ class Machine {
 		if (!$this->runContext) $this->init();
 
 		while (true) {
-			$op = $this->runContext->fetch();
-			if (isset($op)) {
-				$this->runOp($op);
-			} else {
-				$result = $this->runRet();
-				if (isset($result)) return $result;
-			}
+			try {
+				$op = $this->runContext->fetch();
+				if (isset($op)) {
+					$this->runOp($op);
+				} else {
+					$result = $this->runRet();
+					if (isset($result)) return $result;
+				}
 
-			if (isset($steps)) {
-				$steps--;
-				if ($steps <= 0) return null;
-			}
+				if (isset($steps)) {
+					$steps--;
+					if ($steps <= 0) return null;
+				}
 
+			} catch (RunException $e) {
+				if (!$e->getDebugEntry()) {
+					$debugEntry = $this->runContext->getDebugEntry($this->sources);
+					$e->setDebugEntry($debugEntry);
+				}
+				throw $e;
+			}
 		}
 
 		return null;
@@ -169,7 +169,9 @@ class Machine {
 	 * @return Variable
 	 */
 	public function callVar($var, $args = null, $thisVar = null) {
+		$nestLevel = 0;
 		while ($var->isContainer()) {
+			$this->nestDeeper($nestLevel);
 			$var = $var->getValue()->getByIndex(1);
 		}
 
@@ -180,16 +182,21 @@ class Machine {
 		if (!$var->isCallable()) return $var;
 
 		$closure = $var->getValue();
+
 		if ($closure->func->getType() == IValue::TYPE_FUNCTION) {
 			$name = '[closure]';
 			$runContext = $this->runContext;
 			$context = new Context($closure->context, $closure->func, $thisVar, $args);
-			$this->runContext = new RunContext($name, $context);
+			$this->runContext = new RunContext($name, $context, $runContext);
+			$this->runContext->parentContext = null;
 			$result = $this->run();
 			$this->runContext = $runContext;
 		} else {
+			$callDepth = $this->runContext->callDepth;
+			$this->runContext->callDepth++;
 			$thisList = ($thisVar ? $thisVar->getValue() : null);
 			$result = $closure->func->call($closure->context, $thisList, $args);
+			$this->runContext->callDepth = $callDepth;
 		}
 
 		return $result;
@@ -444,14 +451,14 @@ class Machine {
 	}
 
 	protected function opPair() {
-		$item = $this->runContext->pop();
+		$var = $this->runContext->pop()->value;
 		$key = $this->runContext->pop()->asVar();
 		if (!$key->isScalar()) {
 			throw new RunException(RunException::VAR_TYPE, $key->getValue()->getType());
 		}
 
 		$key = $key->getValue()->asString();
-		$this->runContext->push(new StackItem($item->value, StackItem::TYPE_PAIR, null, $key));
+		$this->runContext->push(new StackItem($var, StackItem::TYPE_PAIR, null, $key));
 		return true;
 	}
 
@@ -460,10 +467,10 @@ class Machine {
 		$list = new ListValue;
 		if ($cnt > 0) {
 			foreach ($this->runContext->popMulti($cnt) as $item) {
-				$list->addItem($item->value, $item->getKey());
+				$var = $item->value->copy();
+				$list->addItem($var, $item->getKey());
 			}
 		}
-
 		$this->runContext->push(new StackItem(new Variable($list)));
 		return true;
 	}
@@ -481,15 +488,15 @@ class Machine {
 	}
 
 	protected function opSet() {
-		$value = $this->runContext->pop()->value;
+		$var = $this->runContext->pop()->value->copy();
 		$target = $this->runContext->pop();
-		$target->setVar($value->copy());
+		$target->setVar($var);
 		return true;
 	}
 
 	protected function opCat() {
 		$runContext = $this->runContext;
-		$var = $runContext->pop()->value;
+		$var = $runContext->pop()->value->copy();
 		if ($var->isNull()) return true;
 
 		$target = $runContext->peek();
@@ -672,9 +679,10 @@ class Machine {
 
 	protected function opFor($op) {
 		$runContext = $this->runContext;
-		$step = $runContext->pop()->asVar()->asScalar()->asInt();
-		$end = $runContext->pop()->asVar()->asScalar()->asInt();
-		$begin = $runContext->pop()->asVar()->asScalar()->asInt();
+		$step = $runContext->pop()->asVar();
+		$step = ($step->isNull() ? 1 : $step->asScalar()->asNumber());
+		$end = $runContext->pop()->asVar()->asScalar()->asNumber();
+		$begin = $runContext->pop()->asVar()->asScalar()->asNumber();
 		$target = $runContext->pop();
 		if ($step) {
 			$iterator = new ForIterator($target, $begin, $end, $step);

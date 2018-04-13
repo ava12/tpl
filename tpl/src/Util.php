@@ -4,20 +4,40 @@ namespace ava12\tpl;
 
 class Util {
 	const ENCODING = 'utf8';
+	const FLOAT_PRECISION = 15;
+	const ROUND_ERROR = 1e-15;
+
+	public static function normalizeFloat($f) {
+		return round($f, static::FLOAT_PRECISION);
+	}
+
+	public static function compareFloats($a, $b) {
+		$a = static::normalizeFloat($a);
+		$b = static::normalizeFloat($b);
+		if (abs($a - $b) < static::ROUND_ERROR) return 0;
+		else return ($a > $b ? 1 : -1);
+	}
 
 	/**
-	 * @param int|float|string|bool $a
-	 * @param int|float|string|bool $b
+	 * @param int|float|string|bool|null $a
+	 * @param int|float|string|bool|null $b
 	 * @param bool $strict
-	 * @return bool
+	 * @return bool true: равны
 	 */
 	public static function compareScalars($a, $b, $strict = false) {
+		if (is_int($a)) $a = static::normalizeFloat((float)$a);
+		if (is_int($b)) $b = static::normalizeFloat((float)$b);
 		if ($strict) return ($a === $b);
 
-		if ($a === '0' and is_bool($b) or $b === '0' and is_bool($a)) {
-			return (strlen($a) and strlen($b));
+		if (is_string($a)) $b = (string)$b;
+		elseif (is_string($b)) $a = (string)$a;
+
+		if (is_string($a)) {
+			return ($a === $b);
+		} elseif (is_float($a) and is_float($b)) {
+			return !static::compareFloats($a, $b);
 		} else {
-			return ($a == $b);
+			return ((int)$a == (int)$b);
 		}
 	}
 

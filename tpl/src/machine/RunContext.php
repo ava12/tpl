@@ -4,7 +4,7 @@ namespace ava12\tpl\machine;
 
 class RunContext {
 	const MAX_STACK_DEPTH = 1023;
-	const MAX_CALL_DEPTH = 63;
+	const MAX_CALL_DEPTH = 31;
 	const MAX_ITEM_DEPTH = 31;
 
 	protected static $blockTypes = [CodeChunk::TYPE_DO, CodeChunk::TYPE_LOOP];
@@ -23,7 +23,7 @@ class RunContext {
 	/** @var IIterator[] */
 	protected $iteratorStack = [];
 	protected $templateStack = []; // [[value, flag]]
-	protected $callDepth = 0;
+	public $callDepth = 0;
 	protected $itemDepth = 0;
 	/** @var FunctionDef */
 	protected $functionDef;

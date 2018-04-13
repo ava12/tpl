@@ -24,7 +24,6 @@ class Variable {
 	protected $value = null;
 	protected $isReference = false;
 	protected $isConstant = false;
-	protected $isLockedConstant = false;
 
 	/**
 	 * @param IValue|null $value
@@ -45,9 +44,8 @@ class Variable {
 		return $this->isConstant;
 	}
 
-	public function setIsConst($locked = false) {
-		$this->isLockedConstant = $locked;
-		if ($this->isConstant) return;
+	public function setIsConst() {
+		if ($this->isConstant) return $this;
 
 		$this->isConstant = true;
 		if ($this->value->getType() == IValue::TYPE_LIST) {
@@ -57,6 +55,7 @@ class Variable {
 				$value->getByIndex($i)->setIsConst();
 			}
 		}
+		return $this;
 	}
 
 	public function deref() {
@@ -98,9 +97,7 @@ class Variable {
 	public function copy() {
 		$value = $this->value;
 		if (!$this->isConstant) $value = $value->copy();
-		$result = new static($value);
-		if ($this->isLockedConstant) $result->setIsConst(true);
-		return $result;
+		return new static($value);
 	}
 
 	public function isNull() {

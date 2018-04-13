@@ -1,13 +1,28 @@
-var (foo, bar)
+define foo: 1
+var bar: [: .cr: @foo, .r: @2, .cv: foo, .v: 2 :]
+
 assert(false, isconst(foo))
-foo: const([: 1, 2 :])
-assert(true, isconst(foo))
-assert(true, isconst(foo[2]))
+assert(false, isconst(#foo))
+assert(true, isconst(@foo))
+
+assert(false, isconst(bar))
+assert(false, isconst(#bar))
+assert(false, isconst(@bar))
+
+assert(true, isconst(@bar.cr))
+assert(false, isconst(@bar.r))
+assert(false, isconst(@bar.cv))
+assert(false, isconst(@bar.v))
 
 assert(false, isref(bar))
+assert(true, isref(bar.cr))
+assert(true, isref(bar.r))
+assert(false, isref(bar.cv))
+assert(false, isref(bar.v))
+
 bar: @foo
 assert(true, isref(bar))
-assert(false, isconst(bar))
+assert(true, isconst(bar))
 assert(false, isref(#bar))
 assert(true, isref(@foo))
 

@@ -61,12 +61,13 @@ abstract class AbstractFunctionDef implements IValue {
 			}
 
 			if ($var) $this->vars[$index] = $var;
-			return $index;
+
+		} else {
+			$index = count($this->vars);
+			$this->varNames[$index] = $name;
+			$this->vars[$index] = ($var ?: new Variable);
 		}
 
-		$index = count($this->vars);
-		$this->varNames[$index] = $name;
-		$this->vars[$index] = ($var ?: new Variable);
 		return $index;
 	}
 

@@ -51,7 +51,7 @@ class CodeChunk {
 			else $right = $i - 1;
 		}
 
-		return $debugIps[min($left, $right)];
+		return $debugIps[max(min($left, $right), 0)];
 	}
 
 	public function findDebugEntry($ip) {

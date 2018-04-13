@@ -12,9 +12,9 @@ class ForIterator implements IIterator {
 
 	/**
 	 * @param StackItem $target
-	 * @param int $beginValue
-	 * @param int $endValue
-	 * @param int $step
+	 * @param int|float $beginValue
+	 * @param int|float $endValue
+	 * @param int|float $step
 	 */
 	public function __construct($target, $beginValue, $endValue, $step) {
 //		if (!$step) {
@@ -39,8 +39,8 @@ class ForIterator implements IIterator {
 	}
 
 	public function next() {
-		$this->target->setVar(new Variable(new ScalarValue($this->value)));
 		if ($this->iterationsLeft) {
+			$this->target->setVar(new Variable(new ScalarValue($this->value)));
 			$this->iterationsLeft--;
 			$this->value += $this->step;
 			return true;

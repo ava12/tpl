@@ -37,7 +37,11 @@ class Context implements IVarContainer {
 		$argVarIndex = $this->varIndex['arg'];
 		$this->vars[$argVarIndex] = new Variable($arg);
 		$argIndex = array_slice($this->varIndex, $argVarIndex + 1, count($functionDef->args), true);
-		$emptyIndexes = range($argVarIndex + 1, $argVarIndex + count($argIndex));
+		if ($argIndex) {
+			$emptyIndexes = range($argVarIndex + 1, $argVarIndex + count($argIndex));
+		} else {
+			$emptyIndexes = [];
+		}
 
 		for ($i = 1; $i <= $arg->getCount(); $i++) {
 			/** @var Variable $var */
@@ -74,8 +78,15 @@ class Context implements IVarContainer {
 		return $result;
 	}
 
-	public function addVar($index, $name, $value = null) {
+	public function addVar($index, $name, $var = null) {
 		if (isset($this->varIndex[$name]) and $this->varIndex[$name] == $index) {
+			if (!$var) return;
+
+			if (!$this->vars[$index]->isNull() or $this->vars[$index]->isConst()) {
+				throw new \RuntimeException("объект $name уже есть в данном контексте");
+			}
+
+			$this->vars[$index] = $var;
 			return;
 		}
 
@@ -87,8 +98,8 @@ class Context implements IVarContainer {
 			throw new \RuntimeException("объект $name уже есть в данном контексте");
 		}
 
-		if (!$value) $value = new Variable;
-		$this->vars[$index] = $value;
+		if (!$var) $var = new Variable;
+		$this->vars[$index] = $var;
 		$this->varIndex[$name] = $index;
 	}
 

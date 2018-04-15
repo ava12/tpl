@@ -6,6 +6,9 @@ class ListValue implements IListValue {
 	protected $value;
 	protected $className;
 
+	/**
+	 * @param Variable|Variable[] $value
+	 */
 	public function __construct($value = []) {
 		if (!is_array($value)) {
 			$value = ($value->isNull() ? [] : [$value]);
@@ -186,9 +189,16 @@ class ListValue implements IListValue {
 		else return new ListValue(array_slice($this->value, $start, $count));
 	}
 
+	/**
+	 * @param int $start
+	 * @param int $count
+	 * @param null|IListValue $insert
+	 * @return ListValue
+	 */
 	public function splice($start, $count, $insert) {
 		if (isset($insert)) $insert = $insert->getRawValue();
 		else $insert = [];
+		/** @var Variable[] $insert */
 		if (!isset($count)) $count = count($insert);
 		if (!$this->normalizeStartCount($start, $count)) return $this;
 

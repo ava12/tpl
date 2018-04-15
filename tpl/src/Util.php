@@ -4,8 +4,8 @@ namespace ava12\tpl;
 
 class Util {
 	const ENCODING = 'utf8';
-	const FLOAT_PRECISION = 15;
-	const ROUND_ERROR = 1e-15;
+	const FLOAT_PRECISION = 14;
+	const ROUND_ERROR = 1e-14;
 
 	public static function normalizeFloat($f) {
 		return round($f, static::FLOAT_PRECISION);

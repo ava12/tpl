@@ -108,3 +108,6 @@ assert(4, ceil(3.14))
 assert(-3, ceil(-3.14))
 assert(3, ceil(2.71))
 assert(-2, ceil(-2.71))
+
+assert(8, int(*(10, +(0.1, 0.7))))
+assert(8, floor(*(10, +(0.1, 0.7))))

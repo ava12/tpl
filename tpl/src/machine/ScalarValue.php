@@ -2,6 +2,8 @@
 
 namespace ava12\tpl\machine;
 
+use \ava12\tpl\Util;
+
 class ScalarValue implements IScalarValue {
 	protected $value;
 
@@ -49,7 +51,8 @@ class ScalarValue implements IScalarValue {
 		if (is_int($value)) return $value;
 
 		try {
-			$result = (int)$this->value;
+			if (is_float($value)) $value = Util::normalizeFloat($value);
+			$result = (int)$value;
 		} catch (\Exception $e) {
 			$data = [$e->getMessage(), $e->getFile(), $e->getLine()];
 			throw new RunException(RunException::ARI, $data);

@@ -181,6 +181,7 @@ class Machine {
 
 		if (!$var->isCallable()) return $var;
 
+		/** @var Closure $closure */
 		$closure = $var->getValue();
 
 		if ($closure->func->getType() == IValue::TYPE_FUNCTION) {

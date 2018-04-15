@@ -92,7 +92,7 @@ class StdLib {
 		}
 	}
 
-	protected function mapException($e) {
+	protected function mapException(\Exception $e) {
 		if ($e instanceof AbstractException) return $e;
 
 		$data = [$e->getMessage(), $e->getFile(), $e->getFile()];
@@ -332,13 +332,13 @@ class StdLib {
 	// floor(n)
 	public function callFloor($args) {
 		/** @var Variable[] $args */
-		return floor($this->machine->toNumber($args[0]));
+		return floor(Util::normalizeFloat($this->machine->toNumber($args[0])));
 	}
 
 	// ceil(n)
 	public function callCeil($args) {
 		/** @var Variable[] $args */
-		return ceil($this->machine->toNumber($args[0]));
+		return ceil(Util::normalizeFloat($this->machine->toNumber($args[0])));
 	}
 
 // - сравнения ----------------------------------------------------------------
@@ -482,6 +482,7 @@ class StdLib {
 	// slice(l, start?, count?)
 	public function callSlice($args) {
 		/** @var Variable[] $args */
+		/** @var IListValue $list */
 		$list = $this->machine->toList($args[0])->getValue()->copy();
 		$start = ($args[1]->isNull() ? 1 : $this->machine->toInt($args[1]));
 		$count = ($args[2]->isNull() ? null : $this->machine->toInt($args[2]));
@@ -491,6 +492,7 @@ class StdLib {
 	// splice(l, start?, count?, insert?)
 	public function callSplice($args) {
 		/** @var Variable[] $args */
+		/** @var IListValue $list */
 		$list = $this->machine->toList($args[0])->getValue()->copy();
 		$start = ($args[1]->isNull() ? 1 : $this->machine->toInt($args[1]));
 		$count = ($args[2]->isNull() ? null : $this->machine->toInt($args[2]));
@@ -530,6 +532,7 @@ class StdLib {
 	// values(l)
 	public function callValues($args) {
 		/** @var Variable[] $args */
+		/** @var IListValue $list */
 		$list = $this->machine->toList($args[0])->getValue()->copy();
 		return new Variable(new ListValue($list->getValues()));
 	}
@@ -563,15 +566,18 @@ class StdLib {
 			$callback = $this->machine->getRootContext()->getByKey('-');
 		}
 
-		$list = $this->machine->toList($args[0])->copy();
-		$keys = $this->callKeys([$list])->getValue()->getValues();
-		$values = $list->getValue()->copy()->getValues();
+		$listVar = $this->machine->toList($args[0])->copy();
+		/** @var IListValue $list */
+		$list = $listVar->getValue()->copy();
+		$keys = $this->callKeys([$listVar])->getValue()->getValues();
+		$values = $list->getValues();
+		/** @var Variable[] $indexes */
 		$indexes = [];
 		for ($i = 1; $i <= count($values); $i++) {
 			$indexes[] = new Variable(new ScalarValue($i));
 		}
 
-		usort($indexes, function($a, $b) use ($keys, $values, $callback) {
+		usort($indexes, function(Variable $a, Variable $b) use ($keys, $values, $callback) {
 			$indexA = $a->getValue()->getRawValue() - 1;
 			$indexB = $b->getValue()->getRawValue() - 1;
 			$args = [$values[$indexA], $values[$indexB], $keys[$indexA], $keys[$indexB], $a, $b];

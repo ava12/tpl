@@ -5,6 +5,7 @@ namespace ava12\tpl\parser;
 use \ava12\tpl\machine\AbstractFunctionDef;
 use \ava12\tpl\machine\Machine;
 use \ava12\tpl\machine\CodeChunk;
+use \ava12\tpl\Util;
 
 class Parser {
 	const OP_TO_VALUE = 'toval';
@@ -187,6 +188,10 @@ class Parser {
 	}
 
 	public function pushSource($source, $name, $unique = false) {
+		if (!Util::checkEncoding($source)) {
+			throw new ParseException(ParseException::WRONG_ENCODING, $name);
+		}
+
 		$sourceId = $this->machine->addSourceName($name, $unique);
 		if (!$sourceId) return false;
 

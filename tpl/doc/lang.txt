@@ -136,3 +136,37 @@
   isref(a)
   call(func, args, @container?)
   error(text?)
+
+
+регулярные выражения:
+  regexp(re, mod?):
+    .pattern
+    .count(s)
+    .first(s) \\ [: .match, .pos, .sub: [: (: .match, .pos :)* :] :] | null
+    .last(s) \\ [: .match, .pos, .sub: [: (: .match, .pos :)* :] :] | null
+    .match(s) \\ (: [: .match, .pos, .sub: [: (: .match, .pos :)* :] :]* :)
+    .replace(s, r, limit?) \\ s
+    .split(s, limit?) \\ [: s+ :]
+
+
+файлы:
+  file(name):
+    .content
+    .name
+    .path
+    .size
+    .exists()
+    .load()
+    .save()
+    .delete()
+
+  dir(name):
+    .name
+    .path
+    .exists()
+    .create()
+    .delete()
+    .dir(name)
+    .file(name)
+    .dirs(mask)
+    .files(mask)

@@ -30,6 +30,7 @@ use \ava12\tpl\parser\Parser;
 use \ava12\tpl\parser\Token;
 use \ava12\tpl\parser\MacroProcessor;
 use \ava12\tpl\machine\StdLib;
+use \ava12\tpl\machine\RegexpLib;
 use \ava12\tpl\Util;
 
 $fileName = null;
@@ -90,13 +91,16 @@ foreach ($sources as $entry) {
 	$source = $entry[0];
 	$expectedError = $entry[1];
 	$machine = new Machine;
-	StdLib::setup($machine);
+
 	TestFunction::setup($machine);
+	StdLib::setup($machine);
+	RegexpLib::setup($machine);
+
 	$parser = new Parser($machine);
-	$parser->pushSource($source, $entry[2]);
 	$gotError = 0;
 
 	try {
+		$parser->pushSource($source, $entry[2]);
 		$parser->setStringHandler(Token::TYPE_STRING_PERCENT, new MacroProcessor($machine));
 		$parser->parse();
 		$machine->run();

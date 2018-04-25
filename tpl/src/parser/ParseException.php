@@ -3,6 +3,8 @@
 namespace ava12\tpl\parser;
 
 class ParseException extends \ava12\tpl\AbstractException {
+
+	const WRONG_ENCODING = 100;
 	const UNEXPECTED_EOF = 101;
 	const WRONG_CHAR = 102;
 	const NO_QUOTE = 103;
@@ -25,6 +27,7 @@ class ParseException extends \ava12\tpl\AbstractException {
 		self::UNEXPECTED => 'неожиданная лексема %s, ожидается %s',
 		self::UNEXPECTED_EOF => 'неожиданный конец файла',
 		self::WRONG_CHAR => 'некорректный символ: %s',
+		self::WRONG_ENCODING => 'некорректная кодировка в %s',
 	];
 
 	protected $token;

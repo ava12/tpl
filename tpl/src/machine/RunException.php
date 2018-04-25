@@ -10,6 +10,7 @@ class RunException extends \ava12\tpl\AbstractException {
 	const ITEM_DEPTH = 203;
 	const SET_CONST = 204;
 	const ARI = 205;
+	const REGEXP = 206;
 
 	const WRONG_OP = 301;
 	const NO_CONTEXT = 302;
@@ -32,6 +33,7 @@ class RunException extends \ava12\tpl\AbstractException {
 		self::NO_LOOP => 'команда управления циклом вне цикла',
 		self::NO_TEMPLATE => 'отсутствует шаблон для выбора',
 		self::NO_VAR => 'отсутствует переменная с индексом %2$d в контексте %1$d',
+		self::REGEXP => 'обработка регулярного выражения, код: %s',
 		self::SET_CONST => 'невозможно изменить значение константы',
 		self::STACK_EMPTY => 'исчерпан стек операндов',
 		self::STACK_FULL => 'стек операндов переполнен',

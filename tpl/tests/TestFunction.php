@@ -81,12 +81,13 @@ class TestFunction {
 
 				$pathLen = count($path);
 				for ($i = 1; $i <= $gotCount; $i++) {
-					$path[$pathLen] = $i;
 					$gotKey = $got->getKeyByIndex($i);
+					$path[$pathLen] = $i;
 					if ($expected->getKeyByIndex($i) !== $gotKey) {
 						static::fail('неверный ключ: ' . $gotKey, $path);
 					}
 
+					if (isset($gotKey)) $path[$pathLen] .= ':' . $gotKey;
 					static::compare($expected->getByIndex($i), $got->getByIndex($i), $path);
 				}
 			break;

@@ -9,9 +9,9 @@ class Closure implements IValue {
 
 	/**
 	 * @param FunctionDef|IFunctionValue $func
-	 * @param Context $context
+	 * @param Context|null $context
 	 */
-	public function __construct($func, $context) {
+	public function __construct($func, $context = null) {
 		$this->func = $func;
 		$this->context = $context;
 	}

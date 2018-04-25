@@ -93,6 +93,10 @@ class Util {
 		return mb_substr($text, $start, $length, static::ENCODING);
 	}
 
+	public static function strlen($text) {
+		return mb_strlen($text, static::ENCODING);
+	}
+
 	public static function handleErrors() {
 		set_error_handler(function ($level, $message, $file, $line) {
 			throw new \ErrorException($message, $level, $level, $file, $line);

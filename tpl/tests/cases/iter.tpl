@@ -37,3 +37,7 @@ assert([:3, 1, 4, 1:], vv)
 assert([:'a', 'A':], kk)
 assert([:1, 2, 3, 4:], ii)
 assert([:3, .a: @1, @4, .A: 1:], l)
+
+k: 0
+foreach (function(){[: 3, 1, 4 :]}, i) do k: +(k, i)
+assert(8, k)

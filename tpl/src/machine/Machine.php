@@ -277,7 +277,15 @@ class Machine {
 	}
 
 	public function toBool(Variable $var) {
-		return $this->toScalar($var)->getValue()->asBool();
+		$var = $this->toData($var);
+		$value = $var->getValue();
+		if ($var->isContainer()) {
+			/** @var IListValue */
+			return ($value->getCount() > 0);
+		} else {
+			/** @var IScalarValue */
+			return $value->asBool();
+		}
 	}
 
 	protected function opToval() {
@@ -455,7 +463,7 @@ class Machine {
 		$var = $this->runContext->pop()->value;
 		$key = $this->runContext->pop()->asVar();
 		if (!$key->isScalar()) {
-			throw new RunException(RunException::VAR_TYPE, $key->getValue()->getType());
+			throw new RunException(RunException::VAR_TYPE, $key->getType());
 		}
 
 		$key = $key->getValue()->asString();
@@ -700,9 +708,12 @@ class Machine {
 		$source = $runContext->pop()->asVar();
 		if ($source->isContainer()) {
 			$source = $source->getValue();
-		} else {
+		} elseif ($source->isScalar()) {
 			$source = new ListValue([$source]);
+		} else {
+			throw new RunException(RunException::VAR_TYPE, $source->getType());
 		}
+
 		$iterator = $source->getIterator($valueTarget, $keyTarget, $indexTarget);
 		$runContext->pushLoopChunk($op[1], $iterator);
 		return true;

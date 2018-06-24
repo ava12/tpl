@@ -10,4 +10,8 @@ trait ObjectCounter {
 		static::$lastIndex++;
 		$this->objectIndex = static::$lastIndex;
 	}
+
+	public function getObjectIndex() {
+		return $this->objectIndex;
+	}
 }

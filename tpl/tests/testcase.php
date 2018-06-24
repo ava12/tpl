@@ -1,8 +1,8 @@
 <?php
 
 /*
-	Запуск: php testcase.php [-e<выходная_кодировка>] <имя_файла>
-	Пример: php testcase.php -eCP866 errors.tpl
+	Запуск: php testcase.php [-e<выходная_кодировка>] [-f<кодировка_файловой_системы>] <имя_файла>
+	Пример: php testcase.php -eCP866 -fCP1251 errors.tpl
 
 	Останавливается на первом же проваленном тесте. Печатает:
 		( - начало файла с несколькими тестами
@@ -21,6 +21,7 @@
 
 mb_internal_encoding('utf8');
 define('NL', PHP_EOL);
+define('CDL', 20);
 
 require_once '../autoload.php';
 require_once 'TestFunction.php';
@@ -31,10 +32,13 @@ use \ava12\tpl\parser\Token;
 use \ava12\tpl\parser\MacroProcessor;
 use \ava12\tpl\machine\StdLib;
 use \ava12\tpl\machine\RegexpLib;
+use \ava12\tpl\machine\FileSys;
+use \ava12\tpl\machine\FileLib;
 use \ava12\tpl\Util;
 
 $fileName = null;
 $encoding = null;
+$fileEncoding = null;
 
 function write($text) {
 	global $encoding;
@@ -52,6 +56,10 @@ foreach ($argv as $arg) {
 	switch (substr($arg, 1, 1)) {
 		case 'e':
 			$encoding = substr($arg, 2);
+		break;
+
+		case 'f':
+			$fileEncoding = substr($arg, 2);
 		break;
 	}
 }
@@ -91,12 +99,19 @@ foreach ($sources as $entry) {
 	$source = $entry[0];
 	$expectedError = $entry[1];
 	$machine = new Machine;
+	$parser = new Parser($machine);
 
-	TestFunction::setup($machine);
+	$fs = new FileSys($fileEncoding);
+	$fs->addNameChars('А-Яа-яЁё');
+	$rootDir = __DIR__ . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR;
+	$fsData = require(__DIR__ . DIRECTORY_SEPARATOR . 'files.php');
+	foreach ($fsData as $name => $data) $fs->addRoot($name, $rootDir . $name, $data[0]);
+
+	TestFunction::setup($machine, $fs);
 	StdLib::setup($machine);
 	RegexpLib::setup($machine);
+	FileLib::setup($machine, $fs);
 
-	$parser = new Parser($machine);
 	$gotError = 0;
 
 	try {
@@ -112,9 +127,9 @@ foreach ($sources as $entry) {
 
 			$de = $e->getDebugEntry();
 			$errorIp = $de->chunkIp;
-			$ip = max(0, $errorIp - 7);
+			$ip = max(0, $errorIp - CDL + 3);
 			if (isset($de->funcDef)) {
-				$code = array_slice($de->funcDef->getCodeChunk($de->chunkIndex)->code, $ip, 10, true);
+				$code = array_slice($de->funcDef->getCodeChunk($de->chunkIndex)->code, $ip, CDL, true);
 				foreach ($code as $ip => &$p) {
 					if (is_array($p)) $p = '[' . implode(',', $p) . ']';
 					if ($ip == $errorIp) $p = '>' . $p . '<';

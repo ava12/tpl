@@ -137,7 +137,6 @@
   call(func, args, @container?)
   error(text?)
 
-
 регулярные выражения:
   regexp(re, mod?):
     .pattern
@@ -148,25 +147,37 @@
     .replace(s, r, limit?) \\ s
     .split(s, limit?) \\ [: s+ :]
 
-
 файлы:
   file(name):
     .content
-    .name
-    .path
-    .size
+    .name()
+    .path()
+    .error()
     .exists()
+    .perm():
+      .read
+      .append
+      .write
+      .rename
+      .delete
     .load()
     .save()
+    .append()
+    .rename(name)
+    .move(dir, name?)
     .delete()
 
   dir(name):
-    .name
     .path
-    .exists()
-    .create()
-    .delete()
-    .dir(name)
-    .file(name)
-    .dirs(mask)
-    .files(mask)
+    .error
+    .perm:
+      .read
+      .append
+      .write
+      .rename
+      .delete
+    .parent(): dir
+    .dir(name): dir
+    .file(name): file
+    .dirs(mask?): dir[]
+    .files(mask?): file[]

@@ -24,6 +24,10 @@ class ForeachHandler extends AbstractStateHandler {
 		}
 	}
 
+	public function postReport($nonTerminal) {
+		if ($nonTerminal == 'each-object') $this->parser->emitOp(Parser::OP_TO_VALUE);
+	}
+
 	public function finish() {
 		$this->parser->endCodeChunk();
 	}

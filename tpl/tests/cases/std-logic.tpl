@@ -1,6 +1,8 @@
 assert(true, ~~())
 assert(true, ~~(false))
 assert(false, ~~(true))
+assert(true, ~~([::]))
+assert(false, ~~([:,:]))
 
 assert(false, &&())
 assert(false, &&(false, false))

@@ -9,17 +9,26 @@ use \ava12\tpl\machine\NullValue;
 use \ava12\tpl\machine\FunctionProxy;
 use \ava12\tpl\Util;
 
+
 class TestFunction {
+	const INDENT = '  ';
+
 	protected static $funcs = [
 		'assert' => 'callAssert',
 		'set' => 'callSet',
+		'prepareFs' => 'callPrepareFs',
+		'dump' => 'callDump',
 	];
 
+	/** @var FileSys */
+	protected static $fs;
 
 	/**
 	 * @param Machine $machine
+	 * @param FileSys $fileSys
 	 */
-	public static function setup($machine) {
+	public static function setup($machine, $fileSys) {
+		static::$fs = $fileSys;
 		$mainFunc = $machine->getFunction();
 		foreach (static::$funcs as $name => $handler) {
 			FunctionProxy::inject($mainFunc, $name, [__CLASS__, $handler]);
@@ -113,5 +122,87 @@ class TestFunction {
 		$value = (isset($args[1]) ? $args[1]->getValue() : NullValue::getValue());
 		$args[0]->setValue($value);
 		return null;
+	}
+
+	protected static function prepareDir($path, $content) {
+		$encodedPath = static::$fs->encodeName($path);
+		if (!is_dir($encodedPath)) mkdir($encodedPath);
+		$found = glob($encodedPath . '*');
+		foreach ($found as $name) {
+			$decodedName = static::$fs->decodeName($name);
+			$baseName = explode(DIRECTORY_SEPARATOR, $decodedName);
+			$baseName = array_pop($baseName);
+			if (!isset($content[$baseName])) {
+				unlink($name);
+			}
+		}
+
+		foreach ($content as $name => $value) {
+			$fullName = $path . $name;
+			if (is_array($value)) {
+				static::prepareDir($fullName . DIRECTORY_SEPARATOR, $value);
+			} else {
+				file_put_contents(static::$fs->encodeName($fullName), $value);
+			}
+		}
+	}
+
+	public static function callPrepareFs() {
+		$ds = DIRECTORY_SEPARATOR;
+		$root = __DIR__ . $ds . 'files' . $ds;
+		$fs = require(__DIR__ . $ds . 'files.php');
+		foreach ($fs as $name => $data) {
+			static::prepareDir($root . $name . $ds, $data[1]);
+		}
+	}
+
+	/**
+	 * @param Variable[] $args
+	 * @return null
+	 */
+	public static function callDump($args) {
+		echo PHP_EOL;
+		static::dump($args[0]);
+	}
+
+	/**
+	 * @param Variable $var
+	 * @param string $indent
+	 */
+	protected static function dump($var, $indent = '') {
+		if ($var->isConst()) echo '!';
+		echo $var->getObjectIndex();
+		if ($var->isRef()) {
+			echo ' @ ';
+			static::dump($var->deref(), $indent);
+			return;
+		}
+
+		$value = $var->getValue();
+		$type = $value->getType();
+		echo ' ' . $type;
+		switch ($type) {
+			case IValue::TYPE_SCALAR:
+				/** @var IScalarValue $value */
+				$raw = $value->getRawValue();
+				if (is_bool($raw)) echo ($raw ? ' true' : ' false');
+				elseif (is_string($raw)) echo ' "' . $raw . '"';
+				else echo ' ' . $raw;
+			break;
+
+			case IValue::TYPE_LIST:
+				$newIndent = $indent . self::INDENT;
+				echo ' [:' . PHP_EOL;
+				/** @var IListValue $value */
+				$cnt = $value->getCount();
+				for ($i = 1; $i <= $cnt; $i++) {
+					$key = $value->getKeyByIndex($i);
+					echo $newIndent . '.' . $key . ': ';
+					static::dump($value->getByIndex($i), $newIndent);
+				}
+				echo $indent . ':]';
+			break;
+		}
+		echo PHP_EOL;
 	}
 }

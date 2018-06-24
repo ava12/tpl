@@ -2,8 +2,6 @@
 
 namespace ava12\tpl\machine;
 
-use \ava12\tpl\Util;
-
 class DirObject extends AbstractFileDir {
 	protected static $members = [
 		'path',
@@ -49,7 +47,7 @@ class DirObject extends AbstractFileDir {
 
 		$path = $this->path;
 		$flags = ($isDir ? GLOB_ONLYDIR : 0);
-		$found = glob($this->realName . FileSys::DS . $mask);
+		$found = glob($this->realName . FileSys::DS . $mask, $flags);
 		sort($found);
 
 		foreach ($found as $name) {

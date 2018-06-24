@@ -46,6 +46,7 @@ class FileSys {
 	protected $roots = []; // {name: [path, perm]}
 	protected $defaultRoot;
 	protected $extraNameChars = '';
+	protected $fileRe;
 	protected $fileNameRe;
 	protected $searchNameRe;
 	protected $rootNameRe;
@@ -124,6 +125,7 @@ class FileSys {
 		if ($perm & self::PERM_WRITE) $perm |= self::PERM_APPEND;
 		$this->roots[$name] = [$path, $perm];
 		if (!isset($this->defaultRoot)) $this->defaultRoot = $name;
+		return true;
 	}
 
 	public function isAllowedName($name) {
@@ -164,7 +166,7 @@ class FileSys {
 
 		$perm = $this->roots[$root][1];
 		if ($pathInfo->exists) {
-			if (!is_readable($realName)) return self::ERR_ACCESS;
+			if (!is_readable($realName)) return self::ERR_PERM;
 
 			if ($pathInfo->isFile) {
 				$perm = (is_writable($realName) ? ($perm & (~self::PERM_CREATE)) : self::PERM_READ);

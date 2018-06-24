@@ -22,6 +22,10 @@ class FileLib {
 		$this->fileSys = $fileSys;
 	}
 
+	/**
+	 * @param Machine $machine
+	 * @param FileSys $fileSys
+	 */
 	public static function setup($machine, $fileSys) {
 		$instance = new static($machine, $fileSys);
 		$mainFunc = $machine->getFunction();

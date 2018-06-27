@@ -6,11 +6,13 @@ use \ava12\tpl\machine\IValue;
 use \ava12\tpl\machine\RunException;
 use \ava12\tpl\machine\Closure;
 use \ava12\tpl\machine\NullValue;
-use \ava12\tpl\machine\FunctionProxy;
+use \ava12\tpl\lib\FunctionProxy;
 use \ava12\tpl\Util;
+use \ava12\tpl\env\Env;
+use \ava12\tpl\lib\ILib;
 
 
-class TestFunction {
+class TestFunction implements ILib {
 	const INDENT = '  ';
 
 	protected static $funcs = [
@@ -21,21 +23,23 @@ class TestFunction {
 	];
 
 	/** @var FileSys */
-	protected static $fs;
+	protected $fs;
 
-	/**
-	 * @param Machine $machine
-	 * @param FileSys $fileSys
-	 */
-	public static function setup($machine, $fileSys) {
-		static::$fs = $fileSys;
-		$mainFunc = $machine->getFunction();
-		foreach (static::$funcs as $name => $handler) {
-			FunctionProxy::inject($mainFunc, $name, [__CLASS__, $handler]);
-		}
+	public function __construct($fileSys) {
+		$this->fs = $fileSys;
 	}
 
-	protected static function fail($failure, $path) {
+	public static function setup(Env $env) {
+		$instance = new static($env->fileSys);
+		$mainFunc = $env->machine->getFunction();
+		foreach (static::$funcs as $name => $handler) {
+			FunctionProxy::inject($mainFunc, $name, [$instance, $handler]);
+		}
+
+		return $instance;
+	}
+
+	protected function fail($failure, $path) {
 		$path = implode(',', $path);
 		$message = "получено: [$path] $failure";
 		throw new RunException(RunException::CUSTOM, $message);
@@ -46,13 +50,13 @@ class TestFunction {
 	 * @param Variable $got
 	 * @param array $path
 	 */
-	protected static function compare($expected, $got, $path = []) {
+	protected function compare($expected, $got, $path = []) {
 		if ($expected->isRef() xor $got->isRef()) {
-			static::fail($got->isRef() ? 'ссылка' : 'значение', $path);
+			$this->fail($got->isRef() ? 'ссылка' : 'значение', $path);
 		}
 
 		if ($expected->getType() <> $got->getType()) {
-			static::fail($got->getType(), $path);
+			$this->fail($got->getType(), $path);
 		}
 
 		$expected = $expected->getValue();
@@ -66,7 +70,7 @@ class TestFunction {
 				$value = $got->getRawValue();
 				$expectedValue = $expected->getRawValue();
 				if (!Util::compareScalars($value, $expectedValue)) {
-					static::fail(gettype($value) . '(' . print_r($value, true) . ')', $path);
+					$this->fail(gettype($value) . '(' . print_r($value, true) . ')', $path);
 				}
 			break;
 
@@ -79,13 +83,13 @@ class TestFunction {
 				} elseif ($expected->context !== $got->context) {
 					$failure = 'неверный контекст';
 				}
-				if ($failure) static::fail($failure, $path);
+				if ($failure) $this->fail($failure, $path);
 			break;
 
 			case IValue::TYPE_LIST:
 				$gotCount = $got->getCount();
 				if ($expected->getCount() <> $gotCount) {
-					static::fail('неверная длина: ' . $gotCount, $path);
+					$this->fail('неверная длина: ' . $gotCount, $path);
 				}
 
 				$pathLen = count($path);
@@ -93,20 +97,20 @@ class TestFunction {
 					$gotKey = $got->getKeyByIndex($i);
 					$path[$pathLen] = $i;
 					if ($expected->getKeyByIndex($i) !== $gotKey) {
-						static::fail('неверный ключ: ' . $gotKey, $path);
+						$this->fail('неверный ключ: ' . $gotKey, $path);
 					}
 
 					if (isset($gotKey)) $path[$pathLen] .= ':' . $gotKey;
-					static::compare($expected->getByIndex($i), $got->getByIndex($i), $path);
+					$this->compare($expected->getByIndex($i), $got->getByIndex($i), $path);
 				}
 			break;
 		}
 	}
 
-	public static function callAssert($args) {
+	public function callAssert($args) {
 		$expected = (isset($args[0]) ? $args[0] : new Variable);
 		$got = (isset($args[1]) ? $args[1] : new Variable);
-		static::compare($expected, $got);
+		$this->compare($expected, $got);
 
 		echo '.';
 		return null;
@@ -116,7 +120,7 @@ class TestFunction {
 	 * @param Variable[] $args
 	 * @return null
 	 */
-	public static function callSet($args) {
+	public function callSet($args) {
 		if (!isset($args[0])) return null;
 
 		$value = (isset($args[1]) ? $args[1]->getValue() : NullValue::getValue());
@@ -124,12 +128,12 @@ class TestFunction {
 		return null;
 	}
 
-	protected static function prepareDir($path, $content) {
-		$encodedPath = static::$fs->encodeName($path);
+	protected function prepareDir($path, $content) {
+		$encodedPath = $this->fs->encodeName($path);
 		if (!is_dir($encodedPath)) mkdir($encodedPath);
 		$found = glob($encodedPath . '*');
 		foreach ($found as $name) {
-			$decodedName = static::$fs->decodeName($name);
+			$decodedName = $this->fs->decodeName($name);
 			$baseName = explode(DIRECTORY_SEPARATOR, $decodedName);
 			$baseName = array_pop($baseName);
 			if (!isset($content[$baseName])) {
@@ -140,19 +144,19 @@ class TestFunction {
 		foreach ($content as $name => $value) {
 			$fullName = $path . $name;
 			if (is_array($value)) {
-				static::prepareDir($fullName . DIRECTORY_SEPARATOR, $value);
+				$this->prepareDir($fullName . DIRECTORY_SEPARATOR, $value);
 			} else {
-				file_put_contents(static::$fs->encodeName($fullName), $value);
+				file_put_contents($this->fs->encodeName($fullName), $value);
 			}
 		}
 	}
 
-	public static function callPrepareFs() {
+	public function callPrepareFs() {
 		$ds = DIRECTORY_SEPARATOR;
 		$root = __DIR__ . $ds . 'files' . $ds;
 		$fs = require(__DIR__ . $ds . 'files.php');
 		foreach ($fs as $name => $data) {
-			static::prepareDir($root . $name . $ds, $data[1]);
+			$this->prepareDir($root . $name . $ds, $data[1]);
 		}
 	}
 
@@ -160,21 +164,21 @@ class TestFunction {
 	 * @param Variable[] $args
 	 * @return null
 	 */
-	public static function callDump($args) {
+	public function callDump($args) {
 		echo PHP_EOL;
-		static::dump($args[0]);
+		$this->dump($args[0]);
 	}
 
 	/**
 	 * @param Variable $var
 	 * @param string $indent
 	 */
-	protected static function dump($var, $indent = '') {
+	protected function dump($var, $indent = '') {
 		if ($var->isConst()) echo '!';
 		echo $var->getObjectIndex();
 		if ($var->isRef()) {
 			echo ' @ ';
-			static::dump($var->deref(), $indent);
+			$this->dump($var->deref(), $indent);
 			return;
 		}
 
@@ -198,7 +202,7 @@ class TestFunction {
 				for ($i = 1; $i <= $cnt; $i++) {
 					$key = $value->getKeyByIndex($i);
 					echo $newIndent . '.' . $key . ': ';
-					static::dump($value->getByIndex($i), $newIndent);
+					$this->dump($value->getByIndex($i), $newIndent);
 				}
 				echo $indent . ':]';
 			break;

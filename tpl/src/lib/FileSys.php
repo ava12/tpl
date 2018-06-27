@@ -1,6 +1,6 @@
 <?php
 
-namespace ava12\tpl\machine;
+namespace ava12\tpl\lib;
 
 class FileSys {
 	const PERM_READ = 1; // чтение файла
@@ -55,6 +55,16 @@ class FileSys {
 	public function __construct($nameEncoding = null) {
 		$this->nameEncoding = $nameEncoding;
 		$this->makeRes();
+	}
+
+	public static function setup(\ava12\tpl\env\Env $env) {
+		$config = $env->config->file;
+		$instance = new static($config->nameEncoding);
+		$instance->addNameChars($config->nameChars);
+		foreach ($config->roots as $root) {
+			$instance->addRoot($root[0], $root[1], $root[2]);
+		}
+		$env->fileSys = $instance;
 	}
 
 	public function encodeName($name) {

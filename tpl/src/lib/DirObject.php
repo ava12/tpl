@@ -1,6 +1,10 @@
 <?php
 
-namespace ava12\tpl\machine;
+namespace ava12\tpl\lib;
+
+use \ava12\tpl\machine\ListValue;
+use \ava12\tpl\machine\Variable;
+
 
 class DirObject extends AbstractFileDir {
 	protected static $members = [

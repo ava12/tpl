@@ -1,8 +1,12 @@
 <?php
 
-namespace ava12\tpl\machine;
+namespace ava12\tpl\lib;
 
-class FileLib {
+use \ava12\tpl\machine\Machine;
+use \ava12\tpl\env\Env;
+
+
+class FileLib implements ILib {
 	protected static $funcs = [
 		'file' => 'callFile',
 		'dir' => 'callDir',
@@ -22,16 +26,15 @@ class FileLib {
 		$this->fileSys = $fileSys;
 	}
 
-	/**
-	 * @param Machine $machine
-	 * @param FileSys $fileSys
-	 */
-	public static function setup($machine, $fileSys) {
+	public static function setup(Env $env) {
+		$machine = $env->machine;
+		$fileSys = $env->fileSys;
 		$instance = new static($machine, $fileSys);
 		$mainFunc = $machine->getFunction();
 		foreach (static::$funcs as $name => $func) {
 			FunctionProxy::inject($mainFunc, $name, [$instance, $func], 1);
 		}
+		return $instance;
 	}
 
 	public function callFile($args) {

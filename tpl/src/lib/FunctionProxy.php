@@ -1,6 +1,14 @@
 <?php
 
-namespace ava12\tpl\machine;
+namespace ava12\tpl\lib;
+
+use \ava12\tpl\machine\Machine;
+use \ava12\tpl\machine\IValue;
+use \ava12\tpl\machine\IFunctionValue;
+use \ava12\tpl\machine\AbstractFunctionDef;
+use \ava12\tpl\machine\Variable;
+use \ava12\tpl\machine\ScalarValue;
+
 
 class FunctionProxy implements IFunctionValue {
 	// function(Variable[] $args, IListValue $container, Context $context, $param)

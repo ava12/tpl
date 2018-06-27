@@ -1,11 +1,20 @@
 <?php
 
-namespace ava12\tpl\machine;
+namespace ava12\tpl\lib;
 
-use ava12\tpl\AbstractException;
+use \ava12\tpl\AbstractException;
+use \ava12\tpl\machine\Machine;
+use \ava12\tpl\machine\RunException;
+use \ava12\tpl\machine\ScalarValue;
+use \ava12\tpl\machine\Variable;
+use \ava12\tpl\machine\IValue;
+use \ava12\tpl\machine\IListValue;
+use \ava12\tpl\machine\ListValue;
+use \ava12\tpl\machine\NullValue;
 use \ava12\tpl\Util;
+use \ava12\tpl\env\Env;
 
-class StdLib {
+class StdLib implements ILib {
 	protected static $defaultFunc = [1 => 0, 2 => true];
 
 	// {имя: [обработчик, имена|количество?, чистая?]}
@@ -73,10 +82,8 @@ class StdLib {
 		$this->machine = $machine;
 	}
 
-	/**
-	 * @param Machine $machine
-	 */
-	public static function setup($machine) {
+	public static function setup(Env $env) {
+		$machine = $env->machine;
 		$instance = new static($machine);
 		$mainFunc = $machine->getFunction();
 		foreach (static::$funcs as $name => $params) {
@@ -90,6 +97,8 @@ class StdLib {
 			}
 			FunctionProxy::inject($mainFunc, $name, [$instance, $params[0]], $cnt, $params[2], $names);
 		}
+
+		return $instance;
 	}
 
 	protected function mapException(\Exception $e) {

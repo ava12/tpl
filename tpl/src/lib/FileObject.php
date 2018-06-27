@@ -1,8 +1,12 @@
 <?php
 
-namespace ava12\tpl\machine;
+namespace ava12\tpl\lib;
 
 use \ava12\tpl\Util;
+use \ava12\tpl\machine\RunException;
+use \ava12\tpl\machine\Variable;
+use \ava12\tpl\machine\ScalarValue;
+
 
 class FileObject extends AbstractFileDir {
 	protected static $members = [

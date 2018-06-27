@@ -1,6 +1,15 @@
 <?php
 
-namespace ava12\tpl\machine;
+namespace ava12\tpl\lib;
+
+use \ava12\tpl\machine\Machine;
+use \ava12\tpl\machine\IValue;
+use \ava12\tpl\machine\IListValue;
+use \ava12\tpl\machine\Variable;
+use \ava12\tpl\machine\ScalarValue;
+use \ava12\tpl\machine\ListValue;
+use \ava12\tpl\machine\Closure;
+
 
 abstract class AbstractFileDir implements IListValue {
 	// {имя_поля|имя_поля: исходное_имя|имя_метода: [исходное_имя, количество_параметров]}

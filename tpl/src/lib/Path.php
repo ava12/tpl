@@ -1,6 +1,6 @@
 <?php
 
-namespace ava12\tpl\machine;
+namespace ava12\tpl\lib;
 
 class Path {
 	public $error = 0;

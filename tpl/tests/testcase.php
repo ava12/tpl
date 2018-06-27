@@ -35,10 +35,14 @@ use \ava12\tpl\machine\RegexpLib;
 use \ava12\tpl\machine\FileSys;
 use \ava12\tpl\machine\FileLib;
 use \ava12\tpl\Util;
+use \ava12\tpl\env\Env;
+use \ava12\tpl\env\Config;
+use \ava12\tpl\lib\Loader;
 
 $fileName = null;
 $encoding = null;
 $fileEncoding = null;
+
 
 function write($text) {
 	global $encoding;
@@ -65,7 +69,7 @@ foreach ($argv as $arg) {
 }
 
 if (!$fileName) {
-	write(NL . 'Запуск:  php testcase.php [-e<кодировка>] <имя_файла>' . NL);
+	write(NL . 'Запуск:  php testcase.php [-e<кодировка>] [-f<кодировка_фс>] <имя_файла>' . NL);
 	exit(1);
 }
 
@@ -95,23 +99,30 @@ if ($multiple) {
 	$sources = [[$source, 0, $fileName]];
 }
 
+$config = new Config;
+
+if ($fileEncoding) $config->file->nameEncoding = $fileEncoding;
+$config->file->nameChars = 'А-Яа-яЁё';
+$rootDir = __DIR__ . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR;
+$fsData = require(__DIR__ . DIRECTORY_SEPARATOR . 'files.php');
+foreach ($fsData as $name => $data) {
+	$config->file->addRoot($name, $rootDir . $name, $data[0]);
+}
+
+$config->lib->addLib('test', 'TestFunction');
+$config->lib->apply(['lib' => ['std', 'regexp', 'file']]);
+
 foreach ($sources as $entry) {
+	$env = new Env;
+	$lib = new Loader;
+	$env->init($config);
+	$lib->init($env);
+
+	$machine = $env->machine;
+	$parser = $env->parser;
+
 	$source = $entry[0];
 	$expectedError = $entry[1];
-	$machine = new Machine;
-	$parser = new Parser($machine);
-
-	$fs = new FileSys($fileEncoding);
-	$fs->addNameChars('А-Яа-яЁё');
-	$rootDir = __DIR__ . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR;
-	$fsData = require(__DIR__ . DIRECTORY_SEPARATOR . 'files.php');
-	foreach ($fsData as $name => $data) $fs->addRoot($name, $rootDir . $name, $data[0]);
-
-	TestFunction::setup($machine, $fs);
-	StdLib::setup($machine);
-	RegexpLib::setup($machine);
-	FileLib::setup($machine, $fs);
-
 	$gotError = 0;
 
 	try {

@@ -10,15 +10,15 @@ class WhenHandler extends AbstractStateHandler {
 
 		$parser = $this->parser;
 		if ($this->valueCnt > 1) {
-			$parser->emitOp(Parser::OP_MAKE_LIST, $this->valueCnt);
+			$parser->emitOp(IParser::OP_MAKE_LIST, $this->valueCnt);
 		}
-		$parser->emitOpChunk(Parser::OP_WHEN);
+		$parser->emitOpChunk(IParser::OP_WHEN);
 	}
 
 	public function postReport($nonTerminal) {
 		switch ($nonTerminal) {
 			case 'when-value':
-				$this->parser->emitOp(Parser::OP_TO_SCALAR);
+				$this->parser->emitOp(IParser::OP_TO_SCALAR);
 				$this->valueCnt++;
 			break;
 

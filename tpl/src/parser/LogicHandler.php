@@ -7,8 +7,8 @@ class LogicHandler extends AbstractStateHandler {
 	protected $breakOp;
 
 	protected function init() {
-		$this->breakOp = ($this->nonTerminal == 'and-value' ? Parser::OP_WHILE : Parser::OP_UNTIL);
-		$this->parser->emitOpChunk(Parser::OP_DO, Parser::CHUNK_TYPE_DO);
+		$this->breakOp = ($this->nonTerminal == 'and-value' ? IParser::OP_WHILE : IParser::OP_UNTIL);
+		$this->parser->emitOpChunk(IParser::OP_DO, IParser::CHUNK_TYPE_DO);
 	}
 
 	public function preReport($nonTerminal) {
@@ -20,9 +20,9 @@ class LogicHandler extends AbstractStateHandler {
 		}
 
 		$parser = $this->parser;
-		$parser->emitOp(Parser::OP_DUP);
+		$parser->emitOp(IParser::OP_DUP);
 		$parser->emitOp($this->breakOp);
-		$parser->emitOp(Parser::OP_DROP);
+		$parser->emitOp(IParser::OP_DROP);
 	}
 
 	public function finish() {

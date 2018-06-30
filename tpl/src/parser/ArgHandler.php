@@ -13,7 +13,7 @@ class ArgHandler extends AbstractStateHandler {
 	public function useToken($token) {
 		switch ($token->type) {
 			case Token::TYPE_REF:
-				if ($this->parser->functionDef->isPure()) {
+				if ($this->parser->getFunctionDef()->isPure()) {
 					throw new ParseException(ParseException::IMPURE_SIDE);
 				} else {
 					$this->byRef = true;
@@ -29,7 +29,7 @@ class ArgHandler extends AbstractStateHandler {
 
 	public function postReport($nonTerminal) {
 		if ($nonTerminal == 'constant-value') {
-			$this->value = $this->parser->lastConstant;
+			$this->value = $this->parser->getLastConstant();
 		}
 	}
 
@@ -40,6 +40,6 @@ class ArgHandler extends AbstractStateHandler {
 		} else {
 			$value = ($this->byRef ? $value->ref() : $value->deref());
 		}
-		$this->parser->functionDef->addArg($this->argName, $value);
+		$this->parser->getFunctionDef()->addArg($this->argName, $value);
 	}
 }

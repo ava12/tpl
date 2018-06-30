@@ -16,6 +16,6 @@ class MetaHandler extends AbstractStateHandler {
 
 	public function finish() {
 		$this->parser->endFunction();
-		$this->parser->machine->computeExpression($this->func);
+		$this->parser->getMachine()->computeExpression($this->func);
 	}
 }

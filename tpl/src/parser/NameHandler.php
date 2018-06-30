@@ -5,12 +5,12 @@ namespace ava12\tpl\parser;
 class NameHandler extends AbstractStateHandler {
 	public function useToken($token) {
 		$name = $token->value;
-		$machine = $this->parser->machine;
-		$funcDef = $this->parser->functionDef;
+		$machine = $this->parser->getMachine();
+		$funcDef = $this->parser->getFunctionDef();
 		$index = $funcDef->getVarIndex($name);
 
 		if (isset($index)) {
-			$this->parser->emitOp(Parser::OP_VAR, $index);
+			$this->parser->emitOp(IParser::OP_VAR, $index);
 			return;
 		}
 
@@ -32,6 +32,6 @@ class NameHandler extends AbstractStateHandler {
 			}
 		}
 
-		$this->parser->emitOp(Parser::OP_VAR, [$index, $funcDef->index]);
+		$this->parser->emitOp(IParser::OP_VAR, [$index, $funcDef->index]);
 	}
 }

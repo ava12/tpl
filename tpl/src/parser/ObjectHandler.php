@@ -11,14 +11,14 @@ class ObjectHandler extends AbstractStateHandler {
 		$this->isOperation = true;
 		$parser = $this->parser;
 		if ($nonTerminal == 'set') {
-			$parser->emitOp(Parser::OP_SET);
+			$parser->emitOp(IParser::OP_SET);
 		} else {
-			$parser->emitOp(Parser::OP_CONCAT);
-			$parser->emitOp(Parser::OP_DROP);
+			$parser->emitOp(IParser::OP_CONCAT);
+			$parser->emitOp(IParser::OP_DROP);
 		}
 	}
 
 	public function finish() {
-		if (!$this->isOperation) $this->parser->emitOp(Parser::OP_CONCAT);
+		if (!$this->isOperation) $this->parser->emitOp(IParser::OP_CONCAT);
 	}
 }

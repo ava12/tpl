@@ -12,7 +12,7 @@ class FunctionHandler extends AbstractStateHandler {
 				break;
 
 			case 'function':
-				if (!$this->isPure and $this->parser->functionDef->isPure()) {
+				if (!$this->isPure and $this->parser->getFunctionDef()->isPure()) {
 					throw new ParseException(ParseException::IMPURE_SUB);
 				}
 
@@ -23,8 +23,8 @@ class FunctionHandler extends AbstractStateHandler {
 
 	public function finish() {
 		$parser = $this->parser;
-		$funcDef = $parser->functionDef;
+		$funcDef = $parser->getFunctionDef();
 		$parser->endFunction();
-		$parser->emitOp(Parser::OP_FUNC, $funcDef->index);
+		$parser->emitOp(IParser::OP_FUNC, $funcDef->index);
 	}
 }

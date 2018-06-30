@@ -21,6 +21,6 @@ class IfHandler extends AbstractStateHandler {
 	}
 
 	public function finish() {
-		$this->parser->emitOp(Parser::OP_IF, $this->indexes);
+		$this->parser->emitOp(IParser::OP_IF, $this->indexes);
 	}
 }

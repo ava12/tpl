@@ -7,40 +7,7 @@ use \ava12\tpl\machine\Machine;
 use \ava12\tpl\machine\CodeChunk;
 use \ava12\tpl\Util;
 
-class Parser {
-	const OP_TO_VALUE = 'toval';
-	const OP_TO_SCALAR = 'toscalar';
-	const OP_TO_NUMBER = 'tonum';
-	const OP_TO_INT = 'toint';
-	const OP_TO_STRING = 'tostr';
-	const OP_TO_BOOL = 'tobool';
-	const OP_FUNC = 'func';
-	const OP_VAR = 'var';
-	const OP_ITEM = 'item';
-	const OP_MAKE_PAIR = 'pair';
-	const OP_MAKE_LIST = 'mklist';
-	const OP_MAKE_REF = 'mkref';
-	const OP_DEREF = 'deref';
-	const OP_SET = 'set';
-	const OP_CONCAT = 'cat';
-	const OP_CALL = 'call';
-	const OP_DUP = 'dup';
-	const OP_DROP = 'drop';
-	const OP_SWAP = 'swap';
-	const OP_IF = 'if';
-	const OP_NOT_IF = 'nif';
-	const OP_CASE = 'case';
-	const OP_WHEN = 'when';
-	const OP_DO = 'do';
-	const OP_FOR = 'for';
-	const OP_FOREACH = 'each';
-	const OP_CONTINUE = 'continue';
-	const OP_BREAK = 'break';
-	const OP_WHILE = 'while';
-	const OP_UNTIL = 'until';
-	const OP_EXIT = 'exit';
-	const OP_RETURN = 'return';
-	const OP_DEFAULT = 'default';
+class Parser implements IParser {
 
 	protected static $keywords = [
 		'and',
@@ -67,31 +34,26 @@ class Parser {
 		'while',
 	];
 
-	const CHUNK_TYPE_MISC = CodeChunk::TYPE_MISC;
-	const CHUNK_TYPE_LOOP = CodeChunk::TYPE_LOOP;
-	const CHUNK_TYPE_DO = CodeChunk::TYPE_DO;
-	const CHUNK_TYPE_CASE = CodeChunk::TYPE_CASE;
-
 	protected $stringTypes = [
 		Token::TYPE_STRING_SINGLE,
 		Token::TYPE_STRING_DOUBLE,
 		Token::TYPE_STRING_PERCENT,
 	];
 
-	public $machine;
+	protected $machine;
 
 	/** @var Lexer */
 	protected $lexer;
 	/** @var Lexer[] */
 	protected $lexerStack = [];
 	/** @var \ava12\tpl\machine\FunctionDef */
-	public $functionDef;
+	protected $functionDef;
 	/** @var \ava12\tpl\machine\FunctionDef[]  */
-	public $functionDefStack = [];
+	protected $functionDefStack = [];
 	/** @var CodeChunk */
-	public $codeChunk;
+	protected $codeChunk;
 	/** @var CodeChunk[] */
-	public $codeChunkStack = [];
+	protected $codeChunkStack = [];
 
 	/** @var null|Token */
 	protected $savedToken = null;
@@ -115,7 +77,7 @@ class Parser {
 	protected $nonTerminalStack = []; // [[нетерминал, номер_состояния, обработчик]*]
 
 	/** @var null|\ava12\tpl\machine\Variable */
-	public $lastConstant;
+	protected $lastConstant;
 
 	// {нетерминал => имя_класса}
 	protected $nonTerminalHandlers = [
@@ -170,6 +132,12 @@ class Parser {
 			$this->nonTerminalHandler = new $className($this, 0);
 		}
 	}
+
+	public function getMachine() { return $this->machine; }
+	public function getFunctionDef() { return $this->functionDef; }
+	public function getLastConstant() { return $this->lastConstant; }
+	public function setLastConstant($var) { $this->lastConstant = $var; }
+
 
 	public function setStringHandler($stringType, $handler) {
 		$this->stringHandlers[$stringType] = $handler;
@@ -230,7 +198,7 @@ class Parser {
 		$this->codeChunk = array_pop($this->codeChunkStack);
 	}
 
-	public function insertCodeChunk($codeChunk) {
+	public function insertCodeChunk(CodeChunk $codeChunk) {
 		$this->codeChunkStack[] = $this->codeChunk;
 		$this->codeChunk = $codeChunk;
 	}

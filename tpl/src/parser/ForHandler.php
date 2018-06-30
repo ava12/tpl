@@ -8,7 +8,7 @@ class ForHandler extends AbstractStateHandler {
 	public function preReport($nonTerminal) {
 		if ($nonTerminal == 'loop-body') {
 			if (!$this->hasStep) $this->parser->emitNull();
-			$this->parser->emitOpChunk(Parser::OP_FOR, Parser::CHUNK_TYPE_LOOP);
+			$this->parser->emitOpChunk(IParser::OP_FOR, IParser::CHUNK_TYPE_LOOP);
 		}
 	}
 
@@ -18,7 +18,7 @@ class ForHandler extends AbstractStateHandler {
 				$this->hasStep = true;
 			case 'for-start':
 			case 'for-end':
-				$this->parser->emitOp(Parser::OP_TO_NUMBER);
+				$this->parser->emitOp(IParser::OP_TO_NUMBER);
 			break;
 		}
 	}

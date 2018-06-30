@@ -20,10 +20,10 @@ class ConstValueHandler extends AbstractStateHandler {
 
 	public function finish() {
 		$parser = $this->parser;
-		if ($this->isRef) $parser->emitOp(Parser::OP_MAKE_REF);
-		$parser->emitOp(Parser::OP_CONCAT);
-		$funcDef = $parser->functionDef;
+		if ($this->isRef) $parser->emitOp(IParser::OP_MAKE_REF);
+		$parser->emitOp(IParser::OP_CONCAT);
+		$funcDef = $parser->getFunctionDef();
 		$parser->endFunction();
-		$parser->lastConstant = $parser->machine->computeExpression($funcDef);
+		$parser->setLastConstant($parser->getMachine()->computeExpression($funcDef));
 	}
 }

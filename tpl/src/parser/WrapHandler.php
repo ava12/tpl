@@ -11,18 +11,18 @@ class WrapHandler extends AbstractStateHandler {
 			break;
 
 			case 'do-block':
-				$parser->emitOpChunk(Parser::OP_DO, Parser::CHUNK_TYPE_DO);
+				$parser->emitOpChunk(IParser::OP_DO, IParser::CHUNK_TYPE_DO);
 			break;
 
 			case 'field-body':
-				$parser->emitOp(Parser::OP_TO_VALUE);
+				$parser->emitOp(IParser::OP_TO_VALUE);
 			break;
 		}
 	}
 
 	public function postReport($nonTerminal) {
 		if ($this->nonTerminal == 'pair' and $nonTerminal == 'compound-value') {
-			$this->parser->emitOp(Parser::OP_TO_STRING);
+			$this->parser->emitOp(IParser::OP_TO_STRING);
 		}
 	}
 
@@ -34,26 +34,26 @@ class WrapHandler extends AbstractStateHandler {
 			break;
 
 			case 'field-body':
-				$parser->emitOp(Parser::OP_ITEM);
+				$parser->emitOp(IParser::OP_ITEM);
 			break;
 
 			case 'pair':
-				$parser->emitOp(Parser::OP_MAKE_PAIR);
+				$parser->emitOp(IParser::OP_MAKE_PAIR);
 			break;
 
 			case 'reference':
-				$parser->emitOp(Parser::OP_MAKE_REF);
+				$parser->emitOp(IParser::OP_MAKE_REF);
 			break;
 
 			case 'deref':
-				$parser->emitOp(Parser::OP_DEREF);
+				$parser->emitOp(IParser::OP_DEREF);
 			break;
 
 			case 'compound-expression':
 			case 'deref-expression':
 			case 'literal-expression':
 			case 'reference-expression':
-				$parser->emitOp(Parser::OP_CONCAT);
+				$parser->emitOp(IParser::OP_CONCAT);
 			break;
 		}
 	}

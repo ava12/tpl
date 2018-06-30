@@ -25,9 +25,9 @@ class ListHandler extends AbstractStateHandler {
 
 	public function finish() {
 		if ($this->nonTerminal == 'call') {
-			$this->parser->emitOp(Parser::OP_CALL, $this->elementCount);
+			$this->parser->emitOp(IParser::OP_CALL, $this->elementCount);
 		} else {
-			$this->parser->emitOp(Parser::OP_MAKE_LIST, $this->elementCount);
+			$this->parser->emitOp(IParser::OP_MAKE_LIST, $this->elementCount);
 		}
 	}
 }

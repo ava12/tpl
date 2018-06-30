@@ -3,12 +3,12 @@
 namespace ava12\tpl\parser;
 
 abstract class AbstractStateHandler {
-	/** @var Parser */
+	/** @var IParser */
 	protected $parser;
 	protected $nonTerminal;
 
 	/**
-	 * @param Parser $parser
+	 * @param IParser $parser
 	 * @param string $nonTerminal
 	 */
 	public function __construct($parser, $nonTerminal) {

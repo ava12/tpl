@@ -20,12 +20,12 @@ class ForeachHandler extends AbstractStateHandler {
 		}
 
 		if ($nonTerminal == 'loop-body') {
-			$parser->emitOpChunk(Parser::OP_FOREACH, Parser::CHUNK_TYPE_LOOP);
+			$parser->emitOpChunk(IParser::OP_FOREACH, IParser::CHUNK_TYPE_LOOP);
 		}
 	}
 
 	public function postReport($nonTerminal) {
-		if ($nonTerminal == 'each-object') $this->parser->emitOp(Parser::OP_TO_VALUE);
+		if ($nonTerminal == 'each-object') $this->parser->emitOp(IParser::OP_TO_VALUE);
 	}
 
 	public function finish() {

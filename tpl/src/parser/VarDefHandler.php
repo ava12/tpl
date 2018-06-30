@@ -11,10 +11,10 @@ class VarDefHandler extends AbstractStateHandler {
 	}
 
 	protected function addVar($name, $value = null) {
-		$funcDef = $this->parser->functionDef;
+		$funcDef = $this->parser->getFunctionDef();
 		$index = $funcDef->addVar($name, $value);
 		if ($funcDef->index === 0) {
-			$this->parser->machine->getRootContext()->addVar($index, $name, $value);
+			$this->parser->getMachine()->getRootContext()->addVar($index, $name, $value);
 		}
 		$this->name = null;
 	}
@@ -25,7 +25,7 @@ class VarDefHandler extends AbstractStateHandler {
 		if ($this->name) $this->addVar($this->name);
 
 		$this->name = $token->value;
-		$funcDef = $this->parser->functionDef;
+		$funcDef = $this->parser->getFunctionDef();
 		$index = $funcDef->getVarIndex($this->name);
 		if ($index and $funcDef->getVar($index)->isConst()) {
 			throw new ParseException(ParseException::DUPLICATE_NAME, $this->name);
@@ -36,7 +36,7 @@ class VarDefHandler extends AbstractStateHandler {
 		if ($nonTerminal <> 'constant-value') return;
 
 		$parser = $this->parser;
-		$value = $parser->lastConstant;
+		$value = $parser->getLastConstant();
 		if ($this->isConst) $value->setIsConst();
 		$this->addVar($this->name, $value);
 	}

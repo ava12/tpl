@@ -110,7 +110,7 @@ foreach ($fsData as $name => $data) {
 }
 
 $config->lib->addLib('test', 'TestFunction');
-$config->lib->apply(['lib' => ['std', 'regexp', 'file']]);
+$config->lib->apply(['lib' => ['meta', 'std', 'regexp', 'file']]);
 
 foreach ($sources as $entry) {
 	$env = new Env;
@@ -127,7 +127,7 @@ foreach ($sources as $entry) {
 
 	try {
 		$parser->pushSource($source, $entry[2]);
-		$parser->setStringHandler(Token::TYPE_STRING_PERCENT, new MacroProcessor($machine));
+//		$parser->setStringHandler(Token::TYPE_STRING_PERCENT, new MacroProcessor($machine));
 		$parser->parse();
 		$machine->run();
 

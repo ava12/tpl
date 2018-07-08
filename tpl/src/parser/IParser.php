@@ -21,6 +21,10 @@ interface IParser {
 	public function setStringHandler($stringType, $handler);
 	public function getStringHandler($stringType);
 
+	public function setMetaEnv(IMetaEnv $env);
+	/** @return IMetaEnv|null */
+	public function getMetaEnv();
+
 	public function pushSource($source, $name, $unique = false);
 	public function pushSourceFile($name, $unique = false);
 
@@ -34,38 +38,38 @@ interface IParser {
 
 	/**
 	 * @param string $op
-	 * @param Token $token
+	 * @param Token|null $token
 	 */
 	public function emit($op, $token = null);
 	/**
-	 * @param Token $token
+	 * @param Token|null $token
 	 */
 	public function emitNull($token = null);
 	/**
 	 * @param bool $value
-	 * @param Token $token
+	 * @param Token|null $token
 	 */
 	public function emitBool($value, $token = null);
 	/**
 	 * @param int|float $value
-	 * @param Token $token
+	 * @param Token|null $token
 	 */
 	public function emitNumber($value, $token = null);
 	/**
-	 * @param string $value
-	 * @param Token $token
+	 * @param int|float $value
+	 * @param Token|null $token
 	 */
 	public function emitString($value, $token = null);
 	/**
 	 * @param string $op
 	 * @param array|int|string|null $params
-	 * @param Token $token
+	 * @param Token|null $token
 	 */
 	public function emitOp($op, $params = null, $token = null);
 	/**
 	 * @param string $op
 	 * @param string $chunkType
-	 * @param Token $token
+	 * @param Token|null $token
 	 */
 	public function emitOpChunk($op, $chunkType = self::CHUNK_TYPE_MISC, $token = null);
 

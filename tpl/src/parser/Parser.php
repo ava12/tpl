@@ -62,7 +62,7 @@ class Parser implements IParser {
 	/** @var null|Token */
 	protected $prevToken;
 
-	/** @var IStringProcessor[] */
+	/** @var callable[] */
 	protected $stringHandlers = [];
 
 	// {нетерминал => [{лексема => номер_состояния|false|[номер_состояния|false, нетерминал]}+]}
@@ -78,6 +78,9 @@ class Parser implements IParser {
 
 	/** @var null|\ava12\tpl\machine\Variable */
 	protected $lastConstant;
+
+	/** @var null|IMetaEnv */
+	protected $metaEnv;
 
 	// {нетерминал => имя_класса}
 	protected $nonTerminalHandlers = [
@@ -147,10 +150,19 @@ class Parser implements IParser {
 		return (isset($this->stringHandlers[$stringType]) ? $this->stringHandlers[$stringType] : null);
 	}
 
+	public function setMetaEnv(IMetaEnv $env) {
+		$this->metaEnv = $env;
+	}
+
+	public function getMetaEnv() {
+		return $this->metaEnv;
+	}
+
+
 	protected function processStringToken($token) {
 		$result = $token->value;
 		if (isset($this->stringHandlers[$token->type])) {
-			$result = $this->stringHandlers[$token->type]->process($result, $token->type);
+			$result = $this->stringHandlers[$token->type]($result, $token->type);
 		}
 		return $result;
 	}

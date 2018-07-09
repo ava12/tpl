@@ -101,7 +101,11 @@ class StdLib implements ILib {
 		return $instance;
 	}
 
-	protected function mapException(\Exception $e) {
+	/**
+	 * @param \Exception $e
+	 * @return RunException
+	 */
+	protected function mapException($e) {
 		if ($e instanceof AbstractException) return $e;
 
 		$data = [$e->getMessage(), $e->getFile(), $e->getFile()];
@@ -127,6 +131,8 @@ class StdLib implements ILib {
 				}
 			}
 
+		} catch (\Throwable $e) {
+			throw $this->mapException($e);
 		} catch (\Exception $e) {
 			throw $this->mapException($e);
 		}
@@ -216,6 +222,8 @@ class StdLib implements ILib {
 					return ($args[0] / $args[1]);
 			}
 
+		} catch (\Throwable $e) {
+			throw $this->mapException($e);
 		} catch (\Exception $e) {
 			throw $this->mapException($e);
 		}
@@ -229,6 +237,8 @@ class StdLib implements ILib {
 		try {
 			$rem = $a % $b;
 			return (int)(($a - $rem) / $b);
+		} catch (\Throwable $e) {
+			throw $this->mapException($e);
 		} catch (\Exception $e) {
 			throw $this->mapException($e);
 		}
@@ -241,6 +251,8 @@ class StdLib implements ILib {
 		$b = $this->machine->toInt($args[1]);
 		try {
 			return $a % $b;
+		} catch (\Throwable $e) {
+			throw $this->mapException($e);
 		} catch (\Exception $e) {
 			throw $this->mapException($e);
 		}
@@ -253,6 +265,8 @@ class StdLib implements ILib {
 		$b = $this->machine->toNumber($args[1]);
 		try {
 			return pow($a, $b);
+		} catch (\Throwable $e) {
+			throw $this->mapException($e);
 		} catch (\Exception $e) {
 			throw $this->mapException($e);
 		}
@@ -303,6 +317,8 @@ class StdLib implements ILib {
 
 		try {
 			return $a << $b;
+		} catch (\Throwable $e) {
+			throw $this->mapException($e);
 		} catch (\Exception $e) {
 			throw $this->mapException($e);
 		}
@@ -320,6 +336,8 @@ class StdLib implements ILib {
 
 		try {
 			return $a >> $b;
+		} catch (\Throwable $e) {
+			throw $this->mapException($e);
 		} catch (\Exception $e) {
 			throw $this->mapException($e);
 		}

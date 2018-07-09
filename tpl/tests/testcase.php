@@ -103,10 +103,14 @@ $config = new Config;
 
 if ($fileEncoding) $config->file->nameEncoding = $fileEncoding;
 $config->file->nameChars = 'А-Яа-яЁё';
-$rootDir = __DIR__ . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR;
+$rootDir = __DIR__ . DIRECTORY_SEPARATOR . 'files';
+if (!is_dir($rootDir)) mkdir($rootDir);
+$rootDir .= DIRECTORY_SEPARATOR;
 $fsData = require(__DIR__ . DIRECTORY_SEPARATOR . 'files.php');
 foreach ($fsData as $name => $data) {
-	$config->file->addRoot($name, $rootDir . $name, $data[0]);
+	$dirName = $rootDir . $name;
+	if (!is_dir($dirName)) mkdir($dirName);
+	$config->file->addRoot($name, $dirName, $data[0]);
 }
 
 $config->lib->addLib('test', 'TestFunction');
@@ -127,7 +131,6 @@ foreach ($sources as $entry) {
 
 	try {
 		$parser->pushSource($source, $entry[2]);
-//		$parser->setStringHandler(Token::TYPE_STRING_PERCENT, new MacroProcessor($machine));
 		$parser->parse();
 		$machine->run();
 

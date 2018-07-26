@@ -9,8 +9,9 @@ class FileSys {
 	const PERM_WRITE = 8; // запись чужих файлов
 	const PERM_RENAME = 16; // переименование чужих файлов
 	const PERM_DELETE = 32; // удаление чужих файлов
+	const PERM_INCLUDE = 64; // включение и парсинг скриптов TPL
 
-	const PERM_ALL = 63;
+	const PERM_ALL = 63; // кроме PERM_INCLUDE
 
 	const ERR_ERR = 1; // системная ошибка
 	const ERR_ROOT = 2; // неизвестный корень
@@ -19,7 +20,7 @@ class FileSys {
 	const ERR_TYPE = 5; // некорректный тип (файл вместо каталога и наоборот, спецфайл)
 	const ERR_PERM = 6; // запрещенная операция
 	const ERR_EXISTS = 7; // файл уже существует (при переименовании/перемещении)
-	const ERR_ENCODING = 8;
+	const ERR_ENCODING = 8; // кодировка содержимого несовместима с UTF-8
 
 	const RS = ':';
 	const DS = '/';
@@ -39,6 +40,7 @@ class FileSys {
 		'w' => self::PERM_WRITE,
 		'n' => self::PERM_RENAME,
 		'd' => self::PERM_DELETE,
+		'i' => self::PERM_INCLUDE,
 		'*' => self::PERM_ALL,
 	];
 
@@ -131,7 +133,7 @@ class FileSys {
 		$path = realpath($path);
 		if (!$path) return null;
 
-		$perm = static::permToInt($perm) | self::PERM_READ;
+		$perm = static::permToInt($perm);
 		if ($perm & self::PERM_WRITE) $perm |= self::PERM_APPEND;
 		$this->roots[$name] = [$path, $perm];
 		if (!isset($this->defaultRoot)) $this->defaultRoot = $name;

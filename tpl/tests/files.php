@@ -1,7 +1,7 @@
 <?php
 
 return [
-  'ro' => ['', [
+  'ro' => ['r', [
 		'eols' => [
 			'cr' => "hello\rworld",
 			'crlf' => "hello\r\nworld",
@@ -19,14 +19,14 @@ return [
 		'.hidden' => '',
 		'wrong-enc' => "\xc0\x81",
 	]],
-	'ac' => ['ac', [
+	'ac' => ['rac', [
 		'log.txt' => "123\r\n",
 	]],
-	'cwn' => ['cwn', [
+	'cwn' => ['rcwn', [
 		'sub' => [],
 		'foo.txt' => '',
 	]],
-	'wd' => ['wd', [
+	'wd' => ['rwd', [
 		'sub' => [],
 		'foo.txt' => '',
 		'bar.txt' => '',

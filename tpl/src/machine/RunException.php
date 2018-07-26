@@ -11,6 +11,7 @@ class RunException extends \ava12\tpl\AbstractException {
 	const SET_CONST = 204;
 	const ARI = 205;
 	const REGEXP = 206;
+	const INC = 207;
 
 	const WRONG_OP = 301;
 	const NO_CONTEXT = 302;
@@ -27,6 +28,7 @@ class RunException extends \ava12\tpl\AbstractException {
 		self::ARI => 'арифметическая ошибка (%s)',
 		self::CALL_DEPTH => 'слишком большая глубина вызовов функций',
 		self::CUSTOM => '%s',
+		self::INC => 'невозможно включить файл "%s"',
 		self::ITEM_DEPTH => 'слишком большая глубина преобразования типов',
 		self::NO_CONTEXT => 'контекст с индексом %d недоступен',
 		self::NO_FUNC => 'функция с индексом %d не определена',

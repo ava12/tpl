@@ -21,6 +21,7 @@ abstract class AbstractFileDir implements IListValue {
 		FileSys::PERM_WRITE => 'write',
 		FileSys::PERM_RENAME => 'rename',
 		FileSys::PERM_DELETE => 'delete',
+		FileSys::PERM_INCLUDE => 'include',
 	];
 
 	/** @var Machine */

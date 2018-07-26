@@ -112,6 +112,7 @@ foreach ($fsData as $name => $data) {
 	if (!is_dir($dirName)) mkdir($dirName);
 	$config->file->addRoot($name, $dirName, $data[0]);
 }
+$config->file->addRoot('inc', __DIR__ . DIRECTORY_SEPARATOR . 'inc', 'i');
 
 $config->lib->addLib('test', 'TestFunction');
 $config->lib->apply(['lib' => ['meta', 'std', 'regexp', 'file']]);

@@ -27,3 +27,13 @@ assert('\bar\', %\\\foo\\\%)
   macros([: .foo: 'baz' :])
 }\
 assert('\baz\', %\\\foo\\\%)
+
+\{ include('inc:var_foobar.inc') }\
+assert(1, foobar)
+\{ require('inc:var_foobar.inc') }\
+\{ include('inc:foobar+1.inc') }\
+assert(2, foobar)
+\{ include('inc:foobar+1.inc') }\
+assert(3, foobar)
+\{ require('inc:foobar+1.inc') }\
+assert(3, foobar)

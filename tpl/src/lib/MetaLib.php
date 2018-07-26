@@ -6,6 +6,7 @@ use \ava12\tpl\parser\IMetaEnv;
 use \ava12\tpl\machine\ExpressionDef;
 use \ava12\tpl\machine\Variable;
 use \ava12\tpl\machine\Machine;
+use \ava12\tpl\machine\RunException;
 use \ava12\tpl\parser\Parser;
 use \ava12\tpl\parser\ParseException;
 use \ava12\tpl\parser\Token;
@@ -15,6 +16,8 @@ use \ava12\tpl\env\Env;
 class MetaLib implements ILib, IMetaEnv {
 	protected static $funcs = [
 		'macros' => ['callMacros', 1],
+		'include' => ['callInclude', 1],
+		'require' => ['callRequire', 1],
 	];
 
 
@@ -22,14 +25,18 @@ class MetaLib implements ILib, IMetaEnv {
 	protected $machine;
 	/** @var Parser */
 	protected $parser;
+	/** @var FileSys */
+	protected $fileSys;
 
 	protected $macros = [];
 	protected static $macroRe = '/\\\\([^\\\\]*)\\\\/';
 
+	protected $includes = []; // [Path|":имя": Path]
 
-	public function __construct(Machine $machine, Parser $parser) {
+	public function __construct(Machine $machine, Parser $parser, FileSys $fileSys) {
 		$this->machine = $machine;
 		$this->parser = $parser;
+		$this->fileSys = $fileSys;
 		$parser->setStringHandler(Token::TYPE_STRING_PERCENT, [$this, 'processString']);
 		$parser->setMetaEnv($this);
 	}
@@ -52,7 +59,8 @@ class MetaLib implements ILib, IMetaEnv {
 	public static function setup(Env $env) {
 		$machine = $env->machine;
 		$parser = $env->parser;
-		$instance = new static($machine, $parser);
+		$fileSys = $env->fileSys;
+		$instance = new static($machine, $parser, $fileSys);
 		return $instance;
 	}
 
@@ -69,6 +77,28 @@ class MetaLib implements ILib, IMetaEnv {
 		return null;
 	}
 
+	protected function getIncludeInfo($name) {
+		$path = $this->fileSys->getFileInfo($name);
+		if ($path->error or !$path->exists or !($path->perm & FileSys::PERM_INCLUDE)) {
+			throw new RunException(RunException::INC, $name);
+		}
+		return $path;
+	}
+
+	public function callInclude($args) {
+		/** @var Variable[] $args */
+		$name = $this->machine->toString($args[0]);
+		$this->includes[] = $this->getIncludeInfo($name);
+		return null;
+	}
+
+	public function callRequire($args) {
+		/** @var Variable[] $args */
+		$name = $this->machine->toString($args[0]);
+		$this->includes[':' . $name] = $this->getIncludeInfo($name);
+		return null;
+	}
+
 	public function getMetaFunction() {
 		$result = new ExpressionDef;
 		foreach (static::$funcs as $name => $def) {
@@ -79,6 +109,14 @@ class MetaLib implements ILib, IMetaEnv {
 	}
 
 	public function runMetaFunction(ExpressionDef $func) {
+		$this->includes = [];
+
 		$this->machine->computeExpression($func, '-meta-');
+
+		foreach (array_reverse($this->includes, true) as $k => $path) {
+			$unique = (!is_numeric($k));
+			$source = file_get_contents($path->realName);
+			$this->parser->pushSource($source, $path->name, $unique);
+		}
 	}
 }

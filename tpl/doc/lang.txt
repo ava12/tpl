@@ -137,6 +137,11 @@
   call(func, args, @container?)
   error(text?)
 
+мета:
+  macros(l)
+  include(name)
+  require(name)
+
 регулярные выражения:
   regexp(re, mod?):
     .pattern
@@ -160,6 +165,7 @@
       .write
       .rename
       .delete
+      .include
     .load()
     .save()
     .append()
@@ -176,6 +182,7 @@
       .write
       .rename
       .delete
+      .include
     .parent(): dir
     .dir(name): dir
     .file(name): file

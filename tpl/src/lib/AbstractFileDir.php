@@ -9,6 +9,7 @@ use \ava12\tpl\machine\Variable;
 use \ava12\tpl\machine\ScalarValue;
 use \ava12\tpl\machine\ListValue;
 use \ava12\tpl\machine\Closure;
+use \ava12\tpl\machine\RunException;
 
 
 abstract class AbstractFileDir implements IListValue {
@@ -30,6 +31,7 @@ abstract class AbstractFileDir implements IListValue {
 	protected $fileLib;
 
 	protected $path;
+	protected $name;
 	protected $realName;
 	protected $perm;
 	protected $error = 0;

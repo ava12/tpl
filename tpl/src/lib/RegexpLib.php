@@ -42,7 +42,7 @@ class RegexpLib implements ILib {
 	protected function checkError() {
 		$code = preg_last_error();
 		if ($code) {
-			throw new RunException(RunEexception::REGEXP, $code);
+			throw new RunException(RunException::REGEXP, $code);
 		}
 	}
 
@@ -139,6 +139,7 @@ class RegexpLib implements ILib {
 
 	public function callReplace($args, $t, $c, $regexp) {
 		$machine = $this->machine;
+		/** @var Variable[] $args */
 		$s = $machine->toString($args[0]);
 		$r = $args[1];
 		$limit = $machine->toScalar($args[2]);
@@ -146,6 +147,7 @@ class RegexpLib implements ILib {
 
 		$c = null;
 		while ($r->isContainer()) {
+		    /** @var ListValue $r */
 			$c = $r;
 			$r = $r->getByIndex(1);
 		}
@@ -163,7 +165,7 @@ class RegexpLib implements ILib {
 
 			$args->addItem(new Variable(new ScalarValue($matches[0])), 'match');
 			for ($i = 1; $i < count($matches); $i++) {
-				$sub->addItem(new Variable(new ScalarValue($match)));
+				$sub->addItem(new Variable(new ScalarValue($matches[$i])));
 			}
 			$args->addItem(new Variable($sub), 'sub');
 			$replace = $machine->callVar($r, $args, $c);

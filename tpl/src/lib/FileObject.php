@@ -25,8 +25,6 @@ class FileObject extends AbstractFileDir {
 
 	protected static $nlRe = '/\\r\\n?/';
 
-	protected $name;
-
 
 	protected function addValueMembers() {
 		$this->memberList->addItem(new Variable(new ScalarValue('')), 'content');

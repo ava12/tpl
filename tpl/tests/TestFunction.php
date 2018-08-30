@@ -1,8 +1,9 @@
 <?php
 
-use \ava12\tpl\machine\Machine;
 use \ava12\tpl\machine\Variable;
 use \ava12\tpl\machine\IValue;
+use \ava12\tpl\machine\IScalarValue;
+use \ava12\tpl\machine\IListValue;
 use \ava12\tpl\machine\RunException;
 use \ava12\tpl\machine\Closure;
 use \ava12\tpl\machine\NullValue;
@@ -10,6 +11,7 @@ use \ava12\tpl\lib\FunctionProxy;
 use \ava12\tpl\Util;
 use \ava12\tpl\env\Env;
 use \ava12\tpl\lib\ILib;
+use \ava12\tpl\lib\FileSys;
 
 
 class TestFunction implements ILib {
@@ -167,6 +169,7 @@ class TestFunction implements ILib {
 	public function callDump($args) {
 		echo PHP_EOL;
 		$this->dump($args[0]);
+		return null;
 	}
 
 	/**

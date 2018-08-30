@@ -104,7 +104,7 @@ class StdLib implements ILib {
 
 	/**
 	 * @param \Exception $e
-	 * @return RunException
+	 * @return RunException|AbstractException
 	 */
 	protected function mapException($e) {
 		if ($e instanceof AbstractException) return $e;
@@ -113,12 +113,12 @@ class StdLib implements ILib {
 		return new RunException(RunException::ARI, $data);
 	}
 
-	/**
-	 * @param Variable[] $args
-	 * @param mixed $initial
-	 * @param callable $func (mixed function(mixed $a, ScalarValue $b))
-	 * @return mixed
-	 */
+    /**
+     * @param Variable[] $args
+     * @param mixed $initial
+     * @param callable $func (mixed function(mixed $a, ScalarValue $b))
+     * @return mixed
+     */
 	protected function reduceScalars($args, $initial, $func) {
 		$result = $initial;
 

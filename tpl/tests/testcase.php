@@ -26,14 +26,6 @@ define('CDL', 20);
 require_once '../autoload.php';
 require_once 'TestFunction.php';
 
-use \ava12\tpl\machine\Machine;
-use \ava12\tpl\parser\Parser;
-use \ava12\tpl\parser\Token;
-use \ava12\tpl\parser\MacroProcessor;
-use \ava12\tpl\machine\StdLib;
-use \ava12\tpl\machine\RegexpLib;
-use \ava12\tpl\machine\FileSys;
-use \ava12\tpl\machine\FileLib;
 use \ava12\tpl\Util;
 use \ava12\tpl\env\Env;
 use \ava12\tpl\env\Config;

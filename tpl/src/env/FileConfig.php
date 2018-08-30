@@ -22,7 +22,7 @@ class FileConfig {
 				break;
 
 				case 'roots':
-					$this->addRoots($roots);
+					$this->addRoots($value);
 				break;
 			}
 		}

@@ -2,7 +2,6 @@
 
 namespace ava12\tpl\lib;
 
-use \ava12\tpl\machine\Machine;
 use \ava12\tpl\machine\RunException;
 use \ava12\tpl\machine\IScalarValue;
 

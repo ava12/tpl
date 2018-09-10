@@ -778,6 +778,90 @@ return [
       'or' => [1,'list-element'],
     ],
   ],
+  'arg-definition' => [
+    0 => [
+      '' => 1,
+      '@' => 1,
+    ],
+    1 => [
+      '*' => [2,'var-name'],
+    ],
+    2 => [
+      '' => false,
+      ':' => 3,
+    ],
+    3 => [
+      '@' => [false,'constant-value'],
+      '#' => [false,'constant-value'],
+      '*' => [false,'constant-value'],
+      'true' => [false,'constant-value'],
+      'false' => [false,'constant-value'],
+      '1' => [false,'constant-value'],
+      '"' => [false,'constant-value'],
+      '\'' => [false,'constant-value'],
+      '%' => [false,'constant-value'],
+      '(:' => [false,'constant-value'],
+      'pure' => [false,'constant-value'],
+      'function' => [false,'constant-value'],
+      '{' => [false,'constant-value'],
+      'and' => [false,'constant-value'],
+      'or' => [false,'constant-value'],
+    ],
+  ],
+  'variable-spec' => [
+    0 => [
+      '*' => [1,'var-name'],
+    ],
+    1 => [
+      '' => false,
+      ':' => 2,
+    ],
+    2 => [
+      '@' => [false,'constant-value'],
+      '#' => [false,'constant-value'],
+      '*' => [false,'constant-value'],
+      'true' => [false,'constant-value'],
+      'false' => [false,'constant-value'],
+      '1' => [false,'constant-value'],
+      '"' => [false,'constant-value'],
+      '\'' => [false,'constant-value'],
+      '%' => [false,'constant-value'],
+      '(:' => [false,'constant-value'],
+      'pure' => [false,'constant-value'],
+      'function' => [false,'constant-value'],
+      '{' => [false,'constant-value'],
+      'and' => [false,'constant-value'],
+      'or' => [false,'constant-value'],
+    ],
+  ],
+  'constant' => [
+    0 => [
+      'define' => 1,
+    ],
+    1 => [
+      '*' => [2,'var-name'],
+    ],
+    2 => [
+      ':' => 3,
+    ],
+    3 => [
+      '@' => [false,'constant-value'],
+      '#' => [false,'constant-value'],
+      '*' => [false,'constant-value'],
+      'true' => [false,'constant-value'],
+      'false' => [false,'constant-value'],
+      '1' => [false,'constant-value'],
+      '"' => [false,'constant-value'],
+      '\'' => [false,'constant-value'],
+      '%' => [false,'constant-value'],
+      '(:' => [false,'constant-value'],
+      'pure' => [false,'constant-value'],
+      'function' => [false,'constant-value'],
+      '{' => [false,'constant-value'],
+      'and' => [false,'constant-value'],
+      'or' => [false,'constant-value'],
+    ],
+  ],
   'case-block' => [
     0 => [
       'case' => 1,
@@ -815,81 +899,6 @@ return [
     6 => [
       '' => false,
       'else' => [false,'else-case'],
-    ],
-  ],
-  'arg-definition' => [
-    0 => [
-      '' => 1,
-      '@' => 1,
-    ],
-    1 => [
-      '*' => [2,'var-name'],
-    ],
-    2 => [
-      '' => false,
-      ':' => 3,
-    ],
-    3 => [
-      '@' => [false,'constant-value'],
-      '*' => [false,'constant-value'],
-      'true' => [false,'constant-value'],
-      'false' => [false,'constant-value'],
-      '1' => [false,'constant-value'],
-      '"' => [false,'constant-value'],
-      '\'' => [false,'constant-value'],
-      '%' => [false,'constant-value'],
-      '(:' => [false,'constant-value'],
-      'pure' => [false,'constant-value'],
-      'function' => [false,'constant-value'],
-      '{' => [false,'constant-value'],
-    ],
-  ],
-  'variable-spec' => [
-    0 => [
-      '*' => [1,'var-name'],
-    ],
-    1 => [
-      '' => false,
-      ':' => 2,
-    ],
-    2 => [
-      '@' => [false,'constant-value'],
-      '*' => [false,'constant-value'],
-      'true' => [false,'constant-value'],
-      'false' => [false,'constant-value'],
-      '1' => [false,'constant-value'],
-      '"' => [false,'constant-value'],
-      '\'' => [false,'constant-value'],
-      '%' => [false,'constant-value'],
-      '(:' => [false,'constant-value'],
-      'pure' => [false,'constant-value'],
-      'function' => [false,'constant-value'],
-      '{' => [false,'constant-value'],
-    ],
-  ],
-  'constant' => [
-    0 => [
-      'define' => 1,
-    ],
-    1 => [
-      '*' => [2,'var-name'],
-    ],
-    2 => [
-      ':' => 3,
-    ],
-    3 => [
-      '@' => [false,'constant-value'],
-      '*' => [false,'constant-value'],
-      'true' => [false,'constant-value'],
-      'false' => [false,'constant-value'],
-      '1' => [false,'constant-value'],
-      '"' => [false,'constant-value'],
-      '\'' => [false,'constant-value'],
-      '%' => [false,'constant-value'],
-      '(:' => [false,'constant-value'],
-      'pure' => [false,'constant-value'],
-      'function' => [false,'constant-value'],
-      '{' => [false,'constant-value'],
     ],
   ],
   'field' => [
@@ -1194,7 +1203,7 @@ return [
       '"' => [2,'string'],
       '\'' => [2,'string'],
       '%' => [2,'string'],
-      '{' => [2,'compound-value'],
+      '{' => [2,'compound-key'],
     ],
     2 => [
       ':' => 3,
@@ -1381,6 +1390,25 @@ return [
       'or' => [false,'value'],
     ],
   ],
+  'constant-value' => [
+    0 => [
+      '@' => [false,'value'],
+      '#' => [false,'value'],
+      '*' => [false,'value'],
+      'true' => [false,'value'],
+      'false' => [false,'value'],
+      '1' => [false,'value'],
+      '"' => [false,'value'],
+      '\'' => [false,'value'],
+      '%' => [false,'value'],
+      '(:' => [false,'value'],
+      'pure' => [false,'value'],
+      'function' => [false,'value'],
+      '{' => [false,'value'],
+      'and' => [false,'value'],
+      'or' => [false,'value'],
+    ],
+  ],
   'case-value' => [
     0 => [
       '@' => [false,'value'],
@@ -1486,22 +1514,6 @@ return [
       'or' => [false,'value'],
     ],
   ],
-  'constant-value' => [
-    0 => [
-      '@' => [false,'const-object'],
-      '*' => [false,'const-object'],
-      'true' => [false,'const-object'],
-      'false' => [false,'const-object'],
-      '1' => [false,'const-object'],
-      '"' => [false,'const-object'],
-      '\'' => [false,'const-object'],
-      '%' => [false,'const-object'],
-      '(:' => [false,'const-object'],
-      'pure' => [false,'const-object'],
-      'function' => [false,'const-object'],
-      '{' => [false,'const-compound'],
-    ],
-  ],
   'item-body' => [
     0 => [
       '{' => [1,'item-value'],
@@ -1604,24 +1616,6 @@ return [
       '{' => [false,'compound-value'],
       'and' => [false,'logic-value'],
       'or' => [false,'logic-value'],
-    ],
-  ],
-  'const-object' => [
-    0 => [
-      '' => 1,
-      '@' => 1,
-    ],
-    1 => [
-      '*' => [false,'object'],
-      'true' => [false,'literal-object'],
-      'false' => [false,'literal-object'],
-      '1' => [false,'literal-object'],
-      '"' => [false,'literal-object'],
-      '\'' => [false,'literal-object'],
-      '%' => [false,'literal-object'],
-      '(:' => [false,'literal-object'],
-      'pure' => [false,'literal-object'],
-      'function' => [false,'literal-object'],
     ],
   ],
   'item-value' => [
@@ -1752,6 +1746,11 @@ return [
       '*' => [false,'object'],
     ],
   ],
+  'compound-key' => [
+    0 => [
+      '{' => [false,'compound-value'],
+    ],
+  ],
   'logic-value' => [
     0 => [
       'and' => [false,'and-value'],
@@ -1761,11 +1760,6 @@ return [
   'var-name' => [
     0 => [
       '*' => false,
-    ],
-  ],
-  'const-compound' => [
-    0 => [
-      '{' => [false,'compound-value'],
     ],
   ],
   'field-body' => [

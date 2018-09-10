@@ -91,8 +91,7 @@ class Parser implements IParser {
 		'case-block' => 'CaseHandler',
 		'compound-expression' => 'WrapHandler',
 		'compound-value' => 'WrapHandler',
-		'const-compound' => 'ConstValueHandler',
-		'const-object' => 'ConstValueHandler',
+		'constant-value' => 'ConstValueHandler',
 		'constant' => 'VarDefHandler',
 		'deref' => 'WrapHandler',
 		'deref-expression' => 'WrapHandler',
@@ -369,7 +368,6 @@ class Parser implements IParser {
 			}
 			$savedState = array_pop($this->nonTerminalStack);
 
-			$this->currentNonTerminal = $savedState[0];
 			$stateIndex = $savedState[1];
 			$this->nonTerminalHandler = $savedState[2];
 			$handler = $this->nonTerminalHandler;
@@ -379,6 +377,7 @@ class Parser implements IParser {
 				$handler = $this->nonTerminalStack[$index][2];
 			}
 			if ($handler) $handler->postReport($this->currentNonTerminal);
+			$this->currentNonTerminal = $savedState[0];
 
 		} while ($stateIndex === false);
 

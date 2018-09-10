@@ -56,7 +56,7 @@ when-case = "when", (when-value | ("(", when-value, {",", when-value}, ")")), "t
 
 item-body = item-value, {",", item-value};
 field-body = key;
-constant-value = const-object | const-compound;
+constant-value = value;
 list-body = [list-element], {",", {","}, [list-element]};
 item-value = compound-value | object | literal-object;
 arg-list = arg-definition, {",", arg-definition};
@@ -64,8 +64,6 @@ loop-expression = definition | literal-expression | object-expression | block-ex
 when-value = value;
 when-body = expression;
 
-const-object = ["@"], (object | literal-object);
-const-compound = compound-value;
 value = reference | deref | object | literal-object | compound-value | logic-value;
 list-element = pair | value;
 arg-definition = ["@"], var-name, [":", constant-value];
@@ -77,12 +75,13 @@ var-name = "*";
 reference = "@", value;
 deref = "#", value;
 logic-value = and-value | or-value;
-pair = ".", key | string | compound-value, ":", value;
+pair = ".", key | string | compound-key, ":", value;
 loop-if-body = loop-body;
 loop-else-case = "else", loop-body;
 
 and-value = "and", "(", and-item, {",", and-item}, ")";
 or-value = "or", "(", or-item, {",", or-item}, ")";
+compound-key = compound-value;
 
 and-item = value;
 or-item = value;

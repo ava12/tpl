@@ -33,11 +33,6 @@ pure function () { foo }
 \\:: 108
 pure function (@ a) {}
 
-\\:: 109
-pure function () {
-  function () {}
-}
-
 \\:: 110
 %foo\bar\baz%
 

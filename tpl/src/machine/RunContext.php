@@ -275,4 +275,8 @@ class RunContext {
 		$this->iteratorStack = [];
 		$this->templateStack = [];
 	}
+
+	public function isPure() {
+	    return $this->functionDef->isPure();
+    }
 }

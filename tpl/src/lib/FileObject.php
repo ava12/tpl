@@ -42,6 +42,9 @@ class FileObject extends AbstractFileDir {
 		else throw new RunException(RunException::SET_CONST);
 	}
 
+	/**
+	 * @param Variable $var
+	 */
 	public function concat($var) {
 		$this->memberList->getByIndex(1)->getValue()->concat($var->getValue());
 	}

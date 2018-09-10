@@ -6,8 +6,9 @@ var func2: function(text) {
  '"' replace(text, [: .'"': '&quot;' :]) '"'
 }
 
-var f1: filter(func1)
-var f2: filter(func2)
+var (f1, f2)
+f1: filter(func1)
+f2: filter(func2)
 
 f1 :: '<a'
 f1 :: '&b>'

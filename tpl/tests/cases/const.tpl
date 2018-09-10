@@ -10,3 +10,7 @@ assert((:'12':), bar)
 
 bar: {foo 3}
 assert('13', bar)
+
+define baz: function () {
+  var f: function() {}
+}

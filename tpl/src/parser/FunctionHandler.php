@@ -9,13 +9,9 @@ class FunctionHandler extends AbstractStateHandler {
 		switch ($token->type) {
 			case 'pure':
 				$this->isPure = true;
-				break;
+            break;
 
 			case 'function':
-				if (!$this->isPure and $this->parser->getFunctionDef()->isPure()) {
-					throw new ParseException(ParseException::IMPURE_SUB);
-				}
-
 				$this->parser->beginFunction($this->isPure);
 			break;
 		}

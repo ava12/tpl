@@ -135,12 +135,19 @@ class Machine {
 		return new RunException($code, $data, $debugEntry);
 	}
 
+	protected function checkPurity(Closure $closure) {
+	    if ($this->runContext->isPure() and !$closure->func->isPure()) {
+	        throw new RunException(RunException::IMPURE);
+        }
+    }
+
 	protected function callDeeper() {
 		$this->runContext->goDeeper();
 		$item = $this->runContext->pop();
 		$var = $item->asVar();
 		$closure = $var->getValue();
 		/** @var Closure $closure */
+		$this->checkPurity($closure);
 		if ($closure->func->getType() == IValue::TYPE_FUNCTION) {
 			$name = $item->path;
 			$thisVar = ($item->container ? new Variable($item->container) : null);
@@ -183,6 +190,7 @@ class Machine {
 
 		/** @var Closure $closure */
 		$closure = $var->getValue();
+		$this->checkPurity($closure);
 
 		if ($closure->func->getType() == IValue::TYPE_FUNCTION) {
 			$name = '[closure]';
@@ -220,6 +228,7 @@ class Machine {
 			$this->nestDeeper($nestLevel);
 			$closure = $var->getValue();
 			/** @var Closure $closure */
+            $this->checkPurity($closure);
 			if ($closure->func->getType() == IValue::TYPE_FUNCTION_OBJ) {
 				$var = $closure->func->call($closure->context);
 				if (!isset($var)) $var = new Variable;
@@ -538,6 +547,7 @@ class Machine {
 				$closure = $targetVar->getValue();
 				$container = ((isset($target->container) and $target->container->isPublic()) ? $target->container : null);
 				/** @var Closure $closure */
+                $this->checkPurity($closure);
 				if ($closure->func->getType() == IValue::TYPE_FUNCTION_OBJ) {
 					$closure->func->call($closure->context, $container, $args);
 				} else {
@@ -562,19 +572,20 @@ class Machine {
 
 		$item = $this->runContext->peek();
 		$func = $item->asVar()->getValue();
-		if ($func->getType() == IValue::TYPE_CLOSURE) {
-			/** @var Closure $func */
-			if ($func->func->getType() == IValue::TYPE_FUNCTION_OBJ) {
-				$result = $func->func->call($func->context, $item->container, $args);
-				$this->runContext->poke(new StackItem($result));
-			} else {
-				$this->runContext->pop();
-				$thisList = ((isset($item->container) and $item->container->isPublic()) ? $item->container : null);
-				$context = new Context($func->context, $func->func, new Variable($thisList), $args);
-				$runContext = new RunContext($item->path, $context, $this->runContext);
-				$this->runContext = $runContext;
-			}
-		}
+		if ($func->getType() <> IValue::TYPE_CLOSURE) return true;
+
+        /** @var Closure $func */
+        $this->checkPurity($func);
+        if ($func->func->getType() == IValue::TYPE_FUNCTION_OBJ) {
+            $result = $func->func->call($func->context, $item->container, $args);
+            $this->runContext->poke(new StackItem($result));
+        } else {
+            $this->runContext->pop();
+            $thisList = ((isset($item->container) and $item->container->isPublic()) ? $item->container : null);
+            $context = new Context($func->context, $func->func, new Variable($thisList), $args);
+            $runContext = new RunContext($item->path, $context, $this->runContext);
+            $this->runContext = $runContext;
+        }
 
 		return true;
 	}

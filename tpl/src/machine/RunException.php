@@ -12,6 +12,7 @@ class RunException extends \ava12\tpl\AbstractException {
 	const ARI = 205;
 	const REGEXP = 206;
 	const INC = 207;
+	const IMPURE = 208;
 
 	const WRONG_OP = 301;
 	const NO_CONTEXT = 302;
@@ -23,11 +24,13 @@ class RunException extends \ava12\tpl\AbstractException {
 	const STACK_TYPE = 308;
 	const STACK_EMPTY = 309;
 	const WRONG_CHUNK_TYPE = 310;
+    const WRONG_TEMPLATE = 311;
 
 	protected static $messages = [
 		self::ARI => 'арифметическая ошибка (%s)',
 		self::CALL_DEPTH => 'слишком большая глубина вызовов функций',
 		self::CUSTOM => '%s',
+        self::IMPURE => 'невозможно вызвать общую функцию из чистой',
 		self::INC => 'невозможно включить файл "%s"',
 		self::ITEM_DEPTH => 'слишком большая глубина преобразования типов',
 		self::NO_CONTEXT => 'контекст с индексом %d недоступен',
@@ -46,8 +49,6 @@ class RunException extends \ava12\tpl\AbstractException {
 		self::WRONG_TEMPLATE => 'некорректный тип шаблона: %s',
 	];
 
-
-	const WRONG_TEMPLATE = 311;
 
 	/** @var DebugEntry $debugEntry */
 	protected $debugEntry;

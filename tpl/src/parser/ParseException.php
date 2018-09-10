@@ -13,14 +13,13 @@ class ParseException extends \ava12\tpl\AbstractException {
 	const NO_NAME = 106;
 	const IMPURE_DEF = 107;
 	const IMPURE_SIDE = 108;
-	const IMPURE_SUB = 109;
+//
 	const NO_MACRO = 110;
 
 	protected static $messages = [
 		self::DUPLICATE_NAME => 'имя "%s" уже определено',
 		self::IMPURE_DEF => 'чистая функция не может обращаться к неконстантным объектам',
 		self::IMPURE_SIDE => 'чистая функция не может иметь побочные эффекты',
-		self::IMPURE_SUB => 'функции, объявленные в чистой функции, должны быть чистыми',
 		self::NO_MACRO => 'отсутствует определение макроса \\%s\\',
 		self::NO_NAME => 'имя "%s" не определено в данном контексте',
 		self::NO_QUOTE => 'отсутствует закрывающая кавычка',

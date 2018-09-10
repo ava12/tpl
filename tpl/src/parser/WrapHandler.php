@@ -21,7 +21,7 @@ class WrapHandler extends AbstractStateHandler {
 	}
 
 	public function postReport($nonTerminal) {
-		if ($this->nonTerminal == 'pair' and $nonTerminal == 'compound-value') {
+		if ($this->nonTerminal == 'pair' and $nonTerminal == 'compound-key') {
 			$this->parser->emitOp(IParser::OP_TO_STRING);
 		}
 	}

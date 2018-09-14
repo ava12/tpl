@@ -20,6 +20,8 @@ class MetaLib implements ILib, IMetaEnv {
 		'require' => ['callRequire', 1],
 	];
 
+	const MAX_INCLUDES = 127;
+	protected $incCnt = 0;
 
 	/** @var Machine */
 	protected $machine;
@@ -116,7 +118,12 @@ class MetaLib implements ILib, IMetaEnv {
 		foreach (array_reverse($this->includes, true) as $k => $path) {
 			$unique = (!is_numeric($k));
 			$source = file_get_contents($path->realName);
-			$this->parser->pushSource($source, $path->name, $unique);
+			if ($this->parser->pushSource($source, $path->name, $unique)) {
+				$this->incCnt++;
+				if ($this->incCnt > static::MAX_INCLUDES) {
+					throw new ParseException(ParseException::INCLUDE_DEPTH);
+				}
+			}
 		}
 	}
 }

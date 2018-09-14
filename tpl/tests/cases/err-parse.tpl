@@ -33,6 +33,9 @@ pure function () { foo }
 \\:: 108
 pure function (@ a) {}
 
+\\:: 109
+\{ include('inc:loop-a.inc') }\
+
 \\:: 110
 %foo\bar\baz%
 

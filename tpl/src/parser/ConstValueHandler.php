@@ -2,13 +2,11 @@
 
 namespace ava12\tpl\parser;
 
-use \ava12\tpl\machine\ExpressionDef;
-
 class ConstValueHandler extends AbstractStateHandler {
 	protected $isRef = null;
 
 	protected function init() {
-		$func = new ExpressionDef(true);
+		$func = $this->parser->getMachine()->makeExpression(true);
 		$this->parser->insertFunction($func);
 	}
 

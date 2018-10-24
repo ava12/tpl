@@ -2,6 +2,8 @@
 
 namespace ava12\tpl\parser;
 
+use \ava12\tpl\machine\Machine;
+
 class VarDefHandler extends AbstractStateHandler {
 	protected $isConst;
 	protected $name;
@@ -13,7 +15,7 @@ class VarDefHandler extends AbstractStateHandler {
 	protected function addVar($name, $value = null) {
 		$funcDef = $this->parser->getFunctionDef();
 		$index = $funcDef->addVar($name, $value);
-		if ($funcDef->index === 0) {
+		if ($funcDef->index === Machine::MAIN_FUNC_INDEX) {
 			$this->parser->getMachine()->getRootContext()->addVar($index, $name, $value);
 		}
 		$this->name = null;

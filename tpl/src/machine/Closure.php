@@ -3,7 +3,7 @@
 namespace ava12\tpl\machine;
 
 class Closure implements IValue {
-	/** @var AbstractFunctionDef|IFunctionValue */
+	/** @var FunctionDef|IFunctionValue */
 	public $func;
 	public $context;
 

@@ -5,7 +5,7 @@ namespace ava12\tpl\lib;
 use \ava12\tpl\machine\IValue;
 use \ava12\tpl\machine\IListValue;
 use \ava12\tpl\machine\IFunctionValue;
-use \ava12\tpl\machine\AbstractFunctionDef;
+use \ava12\tpl\machine\FunctionDef;
 use \ava12\tpl\machine\Variable;
 use \ava12\tpl\machine\ScalarValue;
 
@@ -28,7 +28,7 @@ class FunctionProxy implements IFunctionValue {
 	}
 
 	/**
-	 * @param AbstractFunctionDef $funcDef
+	 * @param FunctionDef $funcDef
 	 * @param string $name
 	 * @param callable $callback
 	 * @param int $argCount

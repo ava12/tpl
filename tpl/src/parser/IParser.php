@@ -2,7 +2,7 @@
 
 namespace ava12\tpl\parser;
 
-use \ava12\tpl\machine\AbstractFunctionDef;
+use \ava12\tpl\machine\FunctionDef;
 use \ava12\tpl\machine\Machine;
 use \ava12\tpl\machine\CodeChunk;
 use \ava12\tpl\machine\Variable;
@@ -11,7 +11,7 @@ interface IParser {
 
 	/** @return Machine */
 	public function getMachine();
-	/** @return AbstractFunctionDef */
+	/** @return FunctionDef */
 	public function getFunctionDef();
 	/** @return Variable|null */
 	public function getLastConstant();
@@ -28,7 +28,7 @@ interface IParser {
 	public function pushSource($source, $name, $unique = false);
 	public function pushSourceFile($name, $unique = false);
 
-	public function insertFunction(AbstractFunctionDef $functionDef);
+	public function insertFunction(FunctionDef $functionDef);
 	public function beginFunction($isPure = false);
 	public function endFunction();
 

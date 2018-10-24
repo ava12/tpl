@@ -3,7 +3,7 @@
 namespace ava12\tpl\machine;
 
 class Context implements IVarContainer {
-	/** @var AbstractFunctionDef */
+	/** @var FunctionDef */
 	protected $functionDef;
 	protected $parentContext;
 	/** @var Variable[] $vars */
@@ -13,7 +13,7 @@ class Context implements IVarContainer {
 
 	/**
 	 * @param Context $parentContext
-	 * @param AbstractFunctionDef $functionDef
+	 * @param FunctionDef $functionDef
 	 * @param Variable|null $thisList
 	 * @param IListValue|null $arg
 	 */
@@ -28,13 +28,13 @@ class Context implements IVarContainer {
 			$this->vars[$index] = $var->copy();
 		}
 
-		if (isset($this->varIndex['this'])) {
-			$this->vars[$this->varIndex['this']] = $thisList;
+		if (isset($this->varIndex[FunctionDef::THIS_NAME])) {
+			$this->vars[$this->varIndex[FunctionDef::THIS_NAME]] = $thisList;
 		}
 
-		if (!isset($this->varIndex['arg']) or !$arg->getCount()) return;
+		if (!isset($this->varIndex[FunctionDef::ARG_NAME]) or !$arg->getCount()) return;
 
-		$argVarIndex = $this->varIndex['arg'];
+		$argVarIndex = $this->varIndex[FunctionDef::ARG_NAME];
 		$this->vars[$argVarIndex] = new Variable($arg);
 		$argIndex = array_slice($this->varIndex, $argVarIndex + 1, count($functionDef->args), true);
 		if ($argIndex) {

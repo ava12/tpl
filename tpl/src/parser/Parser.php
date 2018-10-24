@@ -2,7 +2,7 @@
 
 namespace ava12\tpl\parser;
 
-use \ava12\tpl\machine\AbstractFunctionDef;
+use \ava12\tpl\machine\FunctionDef;
 use \ava12\tpl\machine\Machine;
 use \ava12\tpl\machine\CodeChunk;
 use \ava12\tpl\Util;
@@ -185,7 +185,7 @@ class Parser implements IParser {
 		else return $this->pushSource($source, $name, $unique);
 	}
 
-	public function insertFunction(AbstractFunctionDef $functionDef) {
+	public function insertFunction(FunctionDef $functionDef) {
 		$this->functionDefStack[] = $this->functionDef;
 		$this->functionDef = $functionDef;
 		$this->codeChunkStack[] = $this->codeChunk;
@@ -228,7 +228,7 @@ class Parser implements IParser {
 	public function parse() {
 		if (!$this->lexer) return;
 
-		$this->functionDef = $this->machine->getFunction(0);
+		$this->functionDef = $this->machine->getFunction();
 		$this->insertCodeChunk($this->functionDef->getCodeChunk());
 		$currentState = &$this->currentState;
 

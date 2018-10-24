@@ -16,7 +16,7 @@ class DebugEntry {
 	 * @param string $sourceName
 	 * @param int $line
 	 * @param DebugEntry|null $callerEntry
-	 * @param AbstractFunctionDef $funcDef
+	 * @param FunctionDef $funcDef
 	 * @param int|null $chunkIndex
 	 * @param int|null $chunkIp
 	 */

@@ -130,6 +130,20 @@ class TestFunction implements ILib {
 		return null;
 	}
 
+	protected function remove($name) {
+		if (is_file($name)) {
+			unlink($name);
+			return;
+		}
+
+		$list = glob($name . DIRECTORY_SEPARATOR . '*');
+		foreach ($list as $item) {
+			$this->remove($item);
+		}
+
+		rmdir($name);
+	}
+
 	protected function prepareDir($path, $content) {
 		$encodedPath = $this->fs->encodeName($path);
 		if (!is_dir($encodedPath)) mkdir($encodedPath);
@@ -139,7 +153,7 @@ class TestFunction implements ILib {
 			$baseName = explode(DIRECTORY_SEPARATOR, $decodedName);
 			$baseName = array_pop($baseName);
 			if (!isset($content[$baseName])) {
-				unlink($name);
+				$this->remove($name);
 			}
 		}
 

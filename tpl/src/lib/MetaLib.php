@@ -3,7 +3,7 @@
 namespace ava12\tpl\lib;
 
 use \ava12\tpl\parser\IMetaEnv;
-use \ava12\tpl\machine\ExpressionDef;
+use \ava12\tpl\machine\FunctionDef;
 use \ava12\tpl\machine\Variable;
 use \ava12\tpl\machine\Machine;
 use \ava12\tpl\machine\RunException;
@@ -102,7 +102,7 @@ class MetaLib implements ILib, IMetaEnv {
 	}
 
 	public function getMetaFunction() {
-		$result = new ExpressionDef;
+		$result = $this->machine->makeExpression();
 		foreach (static::$funcs as $name => $def) {
 			$func = new FunctionProxy([$this, $def[0]], $def[1]);
 			$result->addVar($name, new Variable($func, true));
@@ -110,7 +110,7 @@ class MetaLib implements ILib, IMetaEnv {
 		return $result;
 	}
 
-	public function runMetaFunction(ExpressionDef $func) {
+	public function runMetaFunction(FunctionDef $func) {
 		$this->includes = [];
 
 		$this->machine->computeExpression($func, '-meta-');

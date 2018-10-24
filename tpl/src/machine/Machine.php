@@ -6,6 +6,7 @@ use \ava12\tpl\Util;
 
 class Machine {
 	const MAX_NEST_LEVEL = 31;
+	const MAIN_FUNC_INDEX = 1;
 
 	/** @var FunctionDef[] */
 	protected $functions = [];
@@ -18,15 +19,16 @@ class Machine {
 
 
 	public function __construct() {
-		$this->functions = [new MainFunctionDef];
-		$this->functions[0]->addCodeChunk();
+		for ($i = 0; $i < self::MAIN_FUNC_INDEX; $i++) $this->functions[] = null;
+		$this->functions[] = new FunctionDef(self::MAIN_FUNC_INDEX, null, false, false, true);
+		$this->functions[self::MAIN_FUNC_INDEX]->addCodeChunk();
 	}
 
 	public function setArgs($args) {
 		$this->args = $args;
 	}
 
-	public function getFunction($index = 0) {
+	public function getFunction($index = self::MAIN_FUNC_INDEX) {
 		if (isset($this->functions[$index])) return $this->functions[$index];
 		else return null;
 	}
@@ -34,7 +36,7 @@ class Machine {
 	protected function makeRootContext() {
 		if ($this->rootContext) return;
 
-		$main = $this->functions[0];
+		$main = $this->functions[self::MAIN_FUNC_INDEX];
 		$this->rootContext = new Context(null, $main, null, $this->args);
 	}
 
@@ -53,13 +55,16 @@ class Machine {
 	 * @param bool $isPure
 	 * @return FunctionDef
 	 */
-	public function addFunction($parent = null, $isPure = false) {
+	public function addFunction($parent, $isPure = false) {
 		$index = count($this->functions);
 		$parentIndex = ($parent ? (int)$parent->index : null);
-		if (!isset($parentIndex)) $result = new MainFunctionDef();
-		else $result = new FunctionDef($index, $parentIndex, $isPure);
+		$result = new FunctionDef($index, $parentIndex, $isPure);
 		$this->functions[$index] = $result;
 		return $result;
+	}
+
+	public function makeExpression($isPure = false) {
+		return new FunctionDef(null, self::MAIN_FUNC_INDEX, $isPure, false, false);
 	}
 
 	public function addSourceName($name, $unique = false) {

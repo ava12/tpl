@@ -2,12 +2,12 @@
 
 namespace ava12\tpl\parser;
 
-use \ava12\tpl\machine\ExpressionDef;
+use \ava12\tpl\machine\FunctionDef;
 
 interface IMetaEnv {
 	/**
-	 * @return ExpressionDef
+	 * @return FunctionDef
 	 */
 	public function getMetaFunction();
-	public function runMetaFunction(ExpressionDef $func);
+	public function runMetaFunction(FunctionDef $func);
 }

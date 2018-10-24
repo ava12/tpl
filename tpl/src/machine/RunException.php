@@ -63,7 +63,7 @@ class RunException extends \ava12\tpl\AbstractException {
 	 * @param DebugEntry $debugEntry
 	 */
 	public function __construct($code, $data = null, $debugEntry = null) {
-		$this->init($code, $data);
+		parent::__construct($code, $data);
 		$this->debugEntry = $debugEntry;
 	}
 

@@ -33,17 +33,18 @@ class BnfException extends RuntimeException {
 
 	public function __construct($code, $data = [], $line = null, $col = null) {
 		$data = (array)$data;
-		$this->code = $code;
 		$this->data = $data;
 		$this->line = $line;
 		$this->col = $col;
-		$this->message = 'error ' . $code . ': ' . static::$messages[$code];
+		$message = 'error ' . $code . ': ' . static::$messages[$code];
 		if ($data) {
 			foreach ($data as &$p) {
 				if (is_array($p)) $p = implode(', ', $p);
 			}
-			$this->message = vsprintf($this->message, $data);
+			$message = vsprintf($this->message, $data);
 		}
-		if ($col) $this->message .= " @ line $line col $col";
+		if ($col) $message .= " @ line $line col $col";
+
+		parent::__construct($message, $code);
 	}
 }

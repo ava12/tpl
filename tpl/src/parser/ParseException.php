@@ -42,7 +42,7 @@ class ParseException extends \ava12\tpl\AbstractException {
 	 * @param Token|null $token
 	 */
 	public function __construct($code, $data = null, $token = null) {
-		$this->init($code, $data);
+		parent::__construct($code, $data);
 		$this->token = $token;
 		if ($token) {
 			$this->message .= ', ' . $token->sourceName . ' @ ' . $token->line;

@@ -2,6 +2,7 @@
 
 namespace ava12\tpl;
 
+
 abstract class AbstractException extends \RuntimeException {
 
 	protected static $messages = [];
@@ -12,12 +13,13 @@ abstract class AbstractException extends \RuntimeException {
 		return $this->data;
 	}
 
-	protected function init($code, $data) {
+	public function __construct($code, $data = null) {
 		$data = (array)$data;
-		$this->code = $code;
 		$this->data = $data;
-		$this->message = 'ошибка ' . $code . ': ' . static::$messages[$code];
-		if ($data) $this->message = vsprintf($this->message, $data);
+		$message = 'ошибка ' . $code . ': ' . static::$messages[$code];
+		if ($data) $message = vsprintf($this->message, $data);
+
+		parent::__construct($message, $code);
 	}
 
 	abstract public function getSourceId();

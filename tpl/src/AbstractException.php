@@ -17,7 +17,7 @@ abstract class AbstractException extends \RuntimeException {
 		$data = (array)$data;
 		$this->data = $data;
 		$message = 'ошибка ' . $code . ': ' . static::$messages[$code];
-		if ($data) $message = vsprintf($this->message, $data);
+		if ($data) $message = vsprintf($message, $data);
 
 		parent::__construct($message, $code);
 	}

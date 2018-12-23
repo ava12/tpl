@@ -26,8 +26,8 @@ return [
       '#' => [0,'expression'],
       'and' => [0,'expression'],
       'or' => [0,'expression'],
-      'exit' => [0,'flow-control'],
-      'return' => [0,'flow-control'],
+      'exit' => [0,'expression'],
+      'return' => [0,'expression'],
     ],
   ],
   'function' => [
@@ -76,8 +76,8 @@ return [
       '#' => [6,'expression'],
       'and' => [6,'expression'],
       'or' => [6,'expression'],
-      'exit' => [6,'flow-control'],
-      'return' => [6,'flow-control'],
+      'exit' => [6,'expression'],
+      'return' => [6,'expression'],
     ],
     7 => [
       '}' => false,
@@ -575,6 +575,8 @@ return [
       '#' => [false,'when-body'],
       'and' => [false,'when-body'],
       'or' => [false,'when-body'],
+      'exit' => [false,'when-body'],
+      'return' => [false,'when-body'],
     ],
   ],
   'if-block' => [
@@ -1028,6 +1030,8 @@ return [
       '#' => [false,'expression'],
       'and' => [false,'expression'],
       'or' => [false,'expression'],
+      'exit' => [false,'expression'],
+      'return' => [false,'expression'],
     ],
   ],
   'else-case' => [
@@ -1057,8 +1061,8 @@ return [
       '#' => [false,'expression'],
       'and' => [false,'expression'],
       'or' => [false,'expression'],
-      'exit' => [false,'flow-control'],
-      'return' => [false,'flow-control'],
+      'exit' => [false,'expression'],
+      'return' => [false,'expression'],
     ],
   ],
   'if-body' => [
@@ -1085,8 +1089,8 @@ return [
       '#' => [false,'expression'],
       'and' => [false,'expression'],
       'or' => [false,'expression'],
-      'exit' => [false,'flow-control'],
-      'return' => [false,'flow-control'],
+      'exit' => [false,'expression'],
+      'return' => [false,'expression'],
     ],
   ],
   'compound-value' => [
@@ -1117,6 +1121,8 @@ return [
       '#' => [1,'expression'],
       'and' => [1,'expression'],
       'or' => [1,'expression'],
+      'exit' => [1,'expression'],
+      'return' => [1,'expression'],
     ],
     2 => [
       '}' => false,
@@ -1150,6 +1156,8 @@ return [
       '#' => [1,'expression'],
       'and' => [1,'expression'],
       'or' => [1,'expression'],
+      'exit' => [1,'expression'],
+      'return' => [1,'expression'],
       '\\{' => [1,'meta'],
     ],
     2 => [
@@ -1597,6 +1605,8 @@ return [
       '#' => [false,'deref-expression'],
       'and' => [false,'logic-expression'],
       'or' => [false,'logic-expression'],
+      'exit' => [false,'flow-control'],
+      'return' => [false,'flow-control'],
     ],
   ],
   'value' => [

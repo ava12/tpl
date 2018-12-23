@@ -1,10 +1,10 @@
-tpl = {expression | flow-control};
+tpl = {expression};
 
 meta = "\{", {expression | meta}, "}\";
 
-expression = definition | literal-expression | object-expression | compound-expression | block-expression | if-block | case-block | reference-expression | deref-expression | logic-expression;
-flow-control = "exit" | ("return", value);
+expression = definition | literal-expression | object-expression | compound-expression | block-expression | if-block | case-block | reference-expression | deref-expression | logic-expression | flow-control;
 
+flow-control = "exit" | ("return", value);
 definition = variable | constant;
 literal-expression = literal-object;
 object-expression = object, [operation];
@@ -39,7 +39,7 @@ bool = "true" | "false";
 number = "1";
 string = '"' | "'" | "%";
 list = "(:", [list-body], ":)";
-function = ["pure"], "function", "(", [arg-list], ")", "{", {expression | flow-control}, "}";
+function = ["pure"], "function", "(", [arg-list], ")", "{", {expression}, "}";
 for-counter = object;
 for-start = object | literal-object | compound-value;
 for-end = object | literal-object | compound-value;
@@ -49,8 +49,8 @@ each-object = value;
 each-value = object;
 each-key = object;
 each-index = object;
-if-body = expression | flow-control;
-else-case = "else", (expression | flow-control);
+if-body = expression;
+else-case = "else", expression;
 case-value = value;
 when-case = "when", (when-value | ("(", when-value, {",", when-value}, ")")), "then", when-body;
 

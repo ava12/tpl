@@ -104,6 +104,7 @@ case foo(bar)[baz] {
 case foo(bar)[baz] {
   when 1 then bar
   when ({foo bar}, baz[1]) then bar: baz
+  when 0 then exit
 }
 else {1 2 3}
 
@@ -113,3 +114,9 @@ or (bar)
 or (bar, baz)
 
 pure function (a) { 'hello ' a }('world')
+
+if foo then exit
+if bar then return bar
+
+if foo then { exit }
+if bar then { return bar }

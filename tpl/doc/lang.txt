@@ -140,11 +140,6 @@
   isref(a)
   call(func, args, @container?)
   error(text?)
-  filter(func?):
-    .content()
-    .func
-    .raw(text)
-    .clear()
 
 мета:
   macros(l)

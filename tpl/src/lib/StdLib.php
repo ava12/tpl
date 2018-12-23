@@ -45,7 +45,6 @@ class StdLib implements ILib {
 		'data' => ['callData', 1],
 		'div' => ['callIDiv', 2],
 		'error' => ['callError', 1],
-		'filter' => ['callFilter', 1],
 		'floor' => ['callFloor', 1],
 		'index' => ['callIndex', 2],
 		'int' => ['callInt', 1],
@@ -700,11 +699,5 @@ class StdLib implements ILib {
 		/** @var Variable[] $args */
 		$text = $this->machine->toString($args[0]);
 		throw new RunException(RunException::CUSTOM, $text);
-	}
-
-	// filter(func?)
-	public function callFilter($args) {
-		/** @var Variable[] $args */
-		return new Variable(new Filter($this->machine, $args[0]));
 	}
 }

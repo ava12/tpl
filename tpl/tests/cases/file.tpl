@@ -1,6 +1,41 @@
-prepareFs()
-
 define NL: chr(10)
+define CR: chr(13)
+
+prepareFs([:
+  .ro: (: 'r', [:
+    .eols: (:
+      .cr: {'hello' CR 'world'},
+      .crlf: {'hello' CR NL 'world'},
+      .lf: {'hello' NL 'world'},
+    :),
+    .parent: (:
+      .child: [:
+        .file: ''
+      :]
+    :),
+    .void: '',
+    .тест: (:
+      .тест: "тест"
+    :),
+    .'.hidden': '',
+    .wrong-enc: bytes(0xc0, 0x81),
+  :]:),
+
+  .ac: (: 'rac', [:
+    .'log.txt': {'123' CR NL}
+  :]:),
+
+  .cwn: (: 'rcwn', [:
+    .sub: (::),
+    .'foo.txt': '',
+  :]:),
+
+  .wd: (: 'rwd', [:
+    .sub: (::),
+    .'foo.txt': '',
+    .'bar.txt': '',
+  :]:),
+:])
 
 define err: [:
   .err: 1,

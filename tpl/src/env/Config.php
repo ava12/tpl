@@ -12,11 +12,15 @@ class Config {
 	public function __construct(array $configs = []) {
 		$this->file = new FileConfig;
 		$this->lib = new LibConfig;
-
+		if ($configs) {
+			$this->apply($configs);
+		}
 	}
 
-	public function apply(array $config) {
-		foreach ($config as $name => $section) $this->addSection($name, $section);
+	public function apply(array $configs) {
+		foreach ($configs as $name => $section) {
+			$this->addSection($name, $section);
+		}
 	}
 
 	public function addSection($name, $config) {

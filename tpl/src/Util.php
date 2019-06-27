@@ -102,4 +102,8 @@ class Util {
 			throw new \ErrorException($message, $level, $level, $file, $line);
 		});
 	}
+
+	public static function isWindows() {
+		return (substr(strtolower(PHP_OS), 0, 3) == 'win');
+	}
 }

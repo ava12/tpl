@@ -19,6 +19,7 @@ class TestFunction implements ILib {
 
 	protected static $funcs = [
 		'assert' => 'callAssert',
+		'bytes' => 'callBytes',
 		'set' => 'callSet',
 		'prepareFs' => 'callPrepareFs',
 		'dump' => 'callDump',
@@ -146,7 +147,9 @@ class TestFunction implements ILib {
 
 	protected function prepareDir($path, $content) {
 		$encodedPath = $this->fs->encodeName($path);
-		if (!is_dir($encodedPath)) mkdir($encodedPath);
+		if (!is_dir($encodedPath)) {
+			mkdir($encodedPath);
+		}
 		$found = glob($encodedPath . '*');
 		foreach ($found as $name) {
 			$decodedName = $this->fs->decodeName($name);
@@ -167,13 +170,59 @@ class TestFunction implements ILib {
 		}
 	}
 
-	public function callPrepareFs() {
+
+	/**
+	 * @param Variable[] $args
+	 * @return null
+	 */
+	public function callPrepareFs($args) {
 		$ds = DIRECTORY_SEPARATOR;
-		$root = __DIR__ . $ds . 'files' . $ds;
-		$fs = require(__DIR__ . $ds . 'files.php');
-		foreach ($fs as $name => $data) {
-			$this->prepareDir($root . $name . $ds, $data[1]);
+		$root = __DIR__ . $ds . 'files';
+		if (!is_dir($root)) {
+			mkdir($root);
 		}
+
+		if (!$args[0]->isContainer()) {
+			throw new RunException(RunException::VAR_TYPE, $args[0]->getType());
+		}
+
+		$fs = $this->asArray($args[0]->getValue());
+		foreach ($fs as $name => $data) {
+			$data = array_values($data);
+			$path = $root . $ds . $name;
+			$this->prepareDir($path . $ds, $data[1]);
+			$this->fs->addRoot($name, $path, $data[0]);
+		}
+		$this->fs->setDefaultRoot(array_keys($fs)[0]);
+
+		return null;
+	}
+
+	/**
+	 * @param IListValue $var
+	 * @return array
+	 */
+	protected function asArray($var) {
+		$result = [];
+		$cnt = $var->getCount();
+		for ($i = 1; $i <= $cnt; $i++) {
+			$key = $var->getKeyByIndex($i);
+			$el = $var->getByIndex($i);
+			if ($el->isContainer()) {
+				$v = $this->asArray($el->getValue());
+			} else {
+				$v = $el->asScalar()->getRawValue();
+			}
+
+			if (isset($key)) {
+				$result[$key] = $v;
+			} else {
+				$result[] = $v;
+			}
+		}
+
+
+		return $result;
 	}
 
 	/**
@@ -225,5 +274,18 @@ class TestFunction implements ILib {
 			break;
 		}
 		echo PHP_EOL;
+	}
+
+	/**
+	 * @param Variable[] $args
+	 * @return string
+	 */
+	public function callBytes($args) {
+		$result = [];
+		foreach ($args as $v) {
+			$result[] = chr($v->asScalar()->asInt() & 0xff);
+		}
+
+		return implode('', $result);
 	}
 }

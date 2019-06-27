@@ -136,8 +136,16 @@ class FileSys {
 		$perm = static::permToInt($perm);
 		if ($perm & self::PERM_WRITE) $perm |= self::PERM_APPEND;
 		$this->roots[$name] = [$path, $perm];
-		if (!isset($this->defaultRoot)) $this->defaultRoot = $name;
+		if (!isset($this->defaultRoot)) {
+			$this->defaultRoot = $name;
+		}
 		return true;
+	}
+
+	public function setDefaultRoot($name) {
+		if (isset($this->roots[$name])) {
+			$this->defaultRoot = $name;
+		}
 	}
 
 	public function isAllowedName($name) {

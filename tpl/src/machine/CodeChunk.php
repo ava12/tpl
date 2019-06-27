@@ -25,6 +25,10 @@ class CodeChunk {
 	public function emit($op, $sourceId = -1, $line = -1) {
 		$ip = count($this->code);
 		$this->code[$ip] = $op;
+		if ($sourceId < 0) {
+			return;
+		}
+
 		if (isset($this->debugIp)) {
 			$entry = $this->debugInfo[$this->debugIp];
 			if ($entry[0] == $sourceId and $entry[1] == $line) {

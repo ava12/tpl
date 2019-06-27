@@ -397,7 +397,14 @@ class Parser implements IParser {
 	}
 
 	public function emit($op, $token = null) {
-		if (!isset($token)) $token = $this->lastToken;
+		if (!isset($token)) {
+			$token = $this->lastToken;
+			if (!isset($token)) {
+				$this->codeChunk->emit($op);
+				return;
+			}
+		}
+
 		$this->codeChunk->emit($op, $token->sourceId, $token->line);
 	}
 

@@ -35,10 +35,6 @@ class Lexer {
 	];
 
 	protected $stringRe = '/([\'"%]).*?\\1(\\1.*?\\1)*/s';
-	protected $opMap = [
-		'[:' => '(:', ':]' => ':)',
-		'((.' => '{', '.))' => '}',
-	];
 
 
 	public function __construct($source, $sourceId, $sourceName) {
@@ -139,7 +135,6 @@ class Lexer {
 	}
 
 	protected function emitOp($value) {
-		if (isset($this->opMap[$value])) $value = $this->opMap[$value];
 		return $this->emit($value, $value);
 	}
 

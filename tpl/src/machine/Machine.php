@@ -15,6 +15,7 @@ class Machine {
 	/** @var RunContext */
 	protected $runContext;
 	protected $sources = [];
+	/** @var IListValue */
 	protected $args;
 
 
@@ -24,8 +25,14 @@ class Machine {
 		$this->functions[self::MAIN_FUNC_INDEX]->addCodeChunk();
 	}
 
+	/**
+	 * @param IListValue $args
+	 */
 	public function setArgs($args) {
 		$this->args = $args;
+		if ($this->rootContext) {
+			$this->rootContext->addVar(0, 'arg', new Variable($args));
+		}
 	}
 
 	public function getFunction($index = self::MAIN_FUNC_INDEX) {

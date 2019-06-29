@@ -15,9 +15,7 @@ class Config {
 	public function __construct(array $configs = []) {
 		$this->file = new FileConfig;
 		$this->lib = new LibConfig;
-		if ($configs) {
-			$this->apply($configs);
-		}
+		$this->apply($configs);
 	}
 
 	public function apply(array $configs) {

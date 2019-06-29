@@ -80,7 +80,7 @@ try {
 	exit(1);
 
 } catch (\Exception $e) {
-	writeln($e->getMessage());
+	writeln($e->__toString());
 	exit(1);
 }
 
@@ -172,7 +172,45 @@ function runTest($srcName, $source) {
 }
 
 function runGen($name, $source) {
+	global $cliConfig, $iniParser;
 
+	if (!$cliConfig->stdout and !strlen($cliConfig->outputDir)) {
+		writeln('каталог для вывода не задан');
+		exit(1);
+	}
+
+	$env = makeEnv($iniParser->getResult());
+	$env->parser->pushSource($source, $name);
+	$env->parser->parse();
+
+	$args = new \ava12\tpl\machine\ListValue;
+	foreach ((array)$iniParser->getResult('arg') as $key => $value) {
+		if (is_numeric($key)) {
+			$key = null;
+		}
+		$args->addItem(new \ava12\tpl\machine\Variable(new \ava12\tpl\machine\ScalarValue($value)), $key);
+	}
+	$env->machine->setArgs($args);
+	$result = $env->machine->run();
+	$text = $env->machine->toString($result);
+	if (!strlen($text)) {
+		return;
+	}
+
+	if (PHP_EOL !== "\n") {
+		$text = str_replace("\n", PHP_EOL, $text);
+	}
+	if ($cliConfig->stdout) {
+		echo $text;
+		return;
+	}
+
+	$resultName = pathinfo($name, PATHINFO_FILENAME);
+	$resultName = $cliConfig->outputDir . DIRECTORY_SEPARATOR . $resultName . $cliConfig->outputSuffix;
+	if (!file_put_contents($resultName, $text, LOCK_EX)) {
+		writeln("невозможно записать файл \"$resultName\"");
+		exit(1);
+	}
 }
 
 function makeEnv($configs) {

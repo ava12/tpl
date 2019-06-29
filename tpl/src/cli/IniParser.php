@@ -18,7 +18,13 @@ class IniParser {
 		$p = &$this->result;
 		while ($path) {
 			$key = array_shift($path);
-			if (!isset($p[$key])) $p[$key] = [];
+			if (!isset($p[$key])) {
+				if (strlen($key)) {
+					$p[$key] = [];
+				} else {
+					$p[] = [];
+				}
+			}
 			$p = &$p[$key];
 		}
 		$p = $value;
@@ -64,7 +70,7 @@ class IniParser {
 	}
 
 	public function getResult($name = null) {
-		$result = $this->processValue($this->result);
+		$result = $this->result;
 		if (isset($name)) {
 			foreach (explode('.', $name) as $key) {
 				if (!is_array($result) or !isset($result[$key])) {
@@ -73,10 +79,9 @@ class IniParser {
 
 				$result = $result[$key];
 			}
-			$result = (isset($result[$name]) ? $result[$name] : []);
 		}
 
-		return $result;
+		return $this->processValue($result);
 	}
 
 	protected function processValue($value) {

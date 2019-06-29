@@ -19,6 +19,7 @@ class ArgParser {
 	const ARG_CON_ENC = 'c';
 	const ARG_ENV = 'e';
 	const ARG_INI_NAME = 'i';
+	const ARG_NO_INI = 'I';
 	const ARG_FS_ENC = 'n';
 	const ARG_OUT_NAME = 'o';
 	const ARG_OUT_CON = 'O';
@@ -37,6 +38,7 @@ class ArgParser {
 		'  -c <кодировка>       кодировка для вывода сообщений',
 		'  -e <имя>=<значение>  добавить переменную окружения',
 		'  -i <имя>             задать имя ini-файла, по умолчанию tpl.ini',
+		'  -I                   не использовать ini-файл',
 		'  -n <кодировка>       то же, что и -s file.nameEncoding=<кодировка>',
 		'  -o <имя>             имя каталога для вывода',
 		'  -O                   выводить результат на консоль',
@@ -53,6 +55,7 @@ class ArgParser {
 		self::ARG_CON_ENC => [true, false],
 		self::ARG_ENV => [true, true, true],
 		self::ARG_INI_NAME => [true, false],
+		self::ARG_NO_INI => [false],
 		self::ARG_FS_ENC => [true, false],
 		self::ARG_OUT_NAME => [true, false],
 		self::ARG_OUT_CON => [false],
@@ -121,7 +124,19 @@ class ArgParser {
 				$value = explode('=', $value, 2);
 				if (count($value) < 2) return null;
 
-				$result[$flag][$value[0]] = $value[1];
+				$k = $value[0];
+				if (substr($k, -2) <> '[]') {
+					$result[$flag][$k] = $value[1];
+					continue;
+				}
+
+				$k = substr($k, 0, -2);
+				if (!isset($result[$flag][$k])) {
+					$result[$flag][$k] = [$value[1]];
+				} else {
+					$result[$flag][$k] = (array)$result[$flag][$k];
+					$result[$flag][$k][] = $value[1];
+				}
 			}
 		}
 
@@ -149,9 +164,14 @@ class ArgParser {
 
 	protected function readIni(array $args) {
 		try {
-			$iniName = (empty($args[self::ARG_INI_NAME]) ? self::DEFAULT_INI_NAME : $args[self::ARG_INI_NAME]);
 			$iniParser = $this->iniParser;
-			$iniParser->parseFile($iniName);
+			$iniName = '';
+
+			if (empty($args[self::ARG_NO_INI])) {
+				$iniName = (empty($args[self::ARG_INI_NAME]) ? self::DEFAULT_INI_NAME : $args[self::ARG_INI_NAME]);
+				$iniParser->parseFile($iniName);
+			}
+
 			$varArgs = [
 				self::ARG_FS_ENC => 'file.nameEncoding',
 				self::ARG_SET => '',
@@ -159,6 +179,9 @@ class ArgParser {
 			];
 			foreach ($varArgs as $arg => $prefix) {
 				foreach ((array)($args[$arg]) as $name => $value) {
+					if (is_numeric($name)) {
+						$name = '';
+					}
 					$iniParser->setValue($prefix . $name, $value);
 				}
 			}

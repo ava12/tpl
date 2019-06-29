@@ -41,3 +41,12 @@ assert([:3, .a: @1, @4, .A: 1:], l)
 k: 0
 foreach (function(){[: 3, 1, 4 :]}, i) do k: +(k, i)
 assert(8, k)
+
+a: ''
+foreach ([::],,,i) do {a :: i}
+assert('', a)
+
+a: ''
+foreach ([:,,:],,,i) do {a :: i}
+assert('12', a)
+

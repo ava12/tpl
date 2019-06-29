@@ -8,7 +8,12 @@ class Config {
 	const WIN_CON_ENC = 'CP866';
 	const CON_ENC_ENV = 'OS_CON_ENC';
 
-	public $consoleEnc = null;
+	const SRC_DEFAULT = 0;
+	const SRC_CONFIG = 1;
+	const SRC_DIRECT = 2;
+
+	protected $encSrc = self::SRC_DEFAULT;
+	protected $consoleEnc = null;
 	public $inputMask = [];
 	public $outputDir = null;
 	public $outputSuffix = null;
@@ -23,10 +28,35 @@ class Config {
 		if ($env) $this->consoleEnc = $env;
 	}
 
+	public function __get($name) {
+		switch ($name) {
+			case 'consoleEnc':
+				return $this->consoleEnc;
+				break;
+		}
+	}
+
+	public function __set($name, $value) {
+		switch ($name) {
+			case 'consoleEnc':
+				if (strlen($value)) {
+					$this->consoleEnc = $value;
+					$this->encSrc = self::SRC_DIRECT;
+				}
+				break;
+		}
+	}
+
 	public function apply(array $config) {
 		foreach ($config as $key => $value) {
 			switch ($key) {
 				case 'consoleEnc':
+					if (strlen($value) and $this->encSrc <= self::SRC_CONFIG) {
+						$this->consoleEnc = $value;
+						$this->encSrc = self::SRC_CONFIG;
+					}
+					break;
+
 				case 'outputDir':
 				case 'outputSuffix':
 					if (!isset($this->$key)) {

@@ -135,7 +135,9 @@ class ArgParser {
 	protected function configCli(array $args) {
 		$config = $this->cliConfig;
 
-		$config->consoleEnc = $args[self::ARG_CON_ENC];
+		if (isset($args[self::ARG_CON_ENC])) {
+			$config->consoleEnc = $args[self::ARG_CON_ENC];
+		}
 		$config->testMode = $args[self::ARG_TEST];
 		if ($args[self::ARG_FILES]) {
 			$config->inputMask = $args[self::ARG_FILES];

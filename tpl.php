@@ -41,7 +41,7 @@ try {
 			if (DIRECTORY_SEPARATOR <> '/') {
 				$name = str_replace(DIRECTORY_SEPARATOR, '/', $name);
 			}
-			$iniParser->setEnv(ENV_INPUT_DIR, dirname($name));
+			$iniParser->setEnv(ENV_INPUT_DIR, dirname(realpath($name)));
 			$iniParser->setEnv(ENV_INPUT_NAME, basename($name));
 
 			$source = file_get_contents($encodedName);
@@ -119,6 +119,7 @@ function runTest($srcName, $source) {
 
 	$errorRe = '/^\\\\\\\\::\\s+((\\d+).*)$/m';
 	$multiple = preg_match_all($errorRe, $source, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+	$sources = [];
 	if ($multiple) {
 		echo '(';
 

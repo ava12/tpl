@@ -4,6 +4,9 @@ namespace ava12\tpl\cli;
 
 use ava12\tpl\Util;
 
+/**
+ * @property string|null $consoleEnc
+ */
 class Config {
 	const WIN_CON_ENC = 'CP866';
 	const CON_ENC_ENV = 'OS_CON_ENC';
@@ -33,6 +36,9 @@ class Config {
 			case 'consoleEnc':
 				return $this->consoleEnc;
 				break;
+
+			default:
+				throw new \RuntimeException('неизвестный параметр конфигурации: ' . $name);
 		}
 	}
 
@@ -44,6 +50,9 @@ class Config {
 					$this->encSrc = self::SRC_DIRECT;
 				}
 				break;
+
+			default:
+				throw new \RuntimeException('неизвестный параметр конфигурации: ' . $name);
 		}
 	}
 

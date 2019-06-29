@@ -9,6 +9,9 @@ class Config {
 	/** @var LibConfig */
 	public $lib;
 
+	const FILE_SECTION = 'file';
+	const LIB_SECTION = 'lib';
+
 	public function __construct(array $configs = []) {
 		$this->file = new FileConfig;
 		$this->lib = new LibConfig;
@@ -18,20 +21,11 @@ class Config {
 	}
 
 	public function apply(array $configs) {
-		foreach ($configs as $name => $section) {
-			$this->addSection($name, $section);
-		}
+		$this->file->apply($this->getConfig($configs, self::FILE_SECTION));
+		$this->lib->apply($this->getConfig($configs, self::LIB_SECTION));
 	}
 
-	public function addSection($name, $config) {
-		switch ($name) {
-			case 'file':
-				$this->file->apply($config);
-			break;
-
-			case 'lib':
-				$this->lib->apply($config);
-			break;
-		}
+	protected function getConfig($configs, $section) {
+		return (isset($configs[$section]) ? (array)$configs[$section] : []);
 	}
 }

@@ -25,7 +25,9 @@ class Env {
 	 */
 	public function init($config = []) {
 		if ($config) {
-			if (!is_object($config)) $config = new Config($config);
+			if (!is_object($config)) {
+				$config = new Config($config);
+			}
 			$this->config = $config;
 		}
 		if (!$this->machine) $this->machine = new Machine;

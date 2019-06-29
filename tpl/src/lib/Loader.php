@@ -20,7 +20,9 @@ class Loader {
 
 	public function addLib($name, $lib) {
 		if (!isset($this->libs[$name])) {
-			if (!is_object($lib)) $lib = call_user_func([$lib, 'setup'], $this->env);
+			if (!is_object($lib)) {
+				$lib = call_user_func([$lib, 'setup'], $this->env);
+			}
 			$this->libs[$name] = $lib;
 		}
 	}

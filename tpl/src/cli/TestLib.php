@@ -1,5 +1,7 @@
 <?php
 
+namespace ava12\tpl\cli;
+
 use \ava12\tpl\machine\Variable;
 use \ava12\tpl\machine\IValue;
 use \ava12\tpl\machine\IScalarValue;
@@ -14,7 +16,7 @@ use \ava12\tpl\lib\ILib;
 use \ava12\tpl\lib\FileSys;
 
 
-class TestFunction implements ILib {
+class TestLib implements ILib {
 	const INDENT = '  ';
 
 	protected static $funcs = [
@@ -177,7 +179,7 @@ class TestFunction implements ILib {
 	 */
 	public function callPrepareFs($args) {
 		$ds = DIRECTORY_SEPARATOR;
-		$root = __DIR__ . $ds . 'files';
+		$root = realpath(__DIR__ . "$ds..$ds..{$ds}tests$ds" . 'files');
 		if (!is_dir($root)) {
 			mkdir($root);
 		}

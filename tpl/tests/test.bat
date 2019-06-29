@@ -1,15 +1,13 @@
 @echo off
 dir > nul
 set XDEBUG_CONFIG="idekey=ava12.tpl"
-if not "%1" == "" goto chosen
+if "%1" == "" goto all
 
-:all
-
-for %%c in (cases\*.tpl) do if not errorlevel 1 php testcase.php -eCP866 -fCP1251 %%c
+php testcase.php -eCP866 -fCP1251 cases\%1.tpl
 goto end
 
-:chosen
-php testcase.php -eCP866 -fCP1251 cases\%1.tpl
+:all
+php ..\..\tpl.php cases\*.tpl
 
 :end
 echo.

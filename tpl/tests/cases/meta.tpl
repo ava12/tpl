@@ -37,3 +37,23 @@ assert(2, foobar)
 assert(3, foobar)
 \{ require('inc:foobar+1.inc') }\
 assert(3, foobar)
+
+\{ newvar('mfoo', 123) }\
+assert(123, mfoo)
+assert(0, isconst(@mfoo))
+
+\{ newdef('mbar', 321) }\
+assert(321, mbar)
+assert(1, isconst(@mbar))
+
+\{ metavar('mbaz', 12) }\
+\{
+  assert(12, mbaz)
+  assert(0, isconst(@mbaz))
+}\
+
+\{ metadef('mvar', 21) }\
+\{
+  assert(21, mvar)
+  assert(1, isconst(@mvar))
+}\

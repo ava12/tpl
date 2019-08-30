@@ -29,6 +29,22 @@ var :
 var foo: 1
 var foo
 
+\\:: 105
+\{ newvar('foo', 1) }\
+var foo: 2
+
+\\:: 105
+\{ newdef('foo', 1) }\
+var foo: 2
+
+\\:: 105
+\{ metavar('foo', 1)}\
+\{ metavar('foo', 2)}\
+
+\\:: 105
+\{ metadef('foo', 1)}\
+\{ metadef('foo', 2)}\
+
 \\:: 106
 foo
 

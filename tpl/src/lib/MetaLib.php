@@ -18,7 +18,13 @@ class MetaLib implements ILib, IMetaEnv {
 		'macros' => ['callMacros', 1],
 		'include' => ['callInclude', 1],
 		'require' => ['callRequire', 1],
+		'newvar' => ['callNewVar', 2],
+		'newdef' => ['callNewDef', 2],
+		'metavar' => ['callMetaVar', 2],
+		'metadef' => ['callMetaDef', 2],
 	];
+
+	protected $vars = []; // {name => value}
 
 	const MAX_INCLUDES = 127;
 	protected $incCnt = 0;
@@ -39,6 +45,9 @@ class MetaLib implements ILib, IMetaEnv {
 		$this->machine = $machine;
 		$this->parser = $parser;
 		$this->fileSys = $fileSys;
+		foreach (static::$funcs as $name => $def) {
+			$this->vars[$name] = new Variable(new FunctionProxy([$this, $def[0]], $def[1]), true);
+		}
 		$parser->setStringHandler(Token::TYPE_STRING_PERCENT, [$this, 'processString']);
 		$parser->setMetaEnv($this);
 	}
@@ -101,11 +110,46 @@ class MetaLib implements ILib, IMetaEnv {
 		return null;
 	}
 
+	public function callNewVar($args) {
+		/** @var Variable[] $args */
+		$name = $this->machine->toString($args[0]);
+		$value = $args[1];
+		if (!$value->isConst()) $value = $value->copy();
+		$index = $this->machine->getFunction()->addVar($name, $value);
+		$this->machine->getRootContext()->addVar($index, $name, $value);
+
+		return null;
+	}
+
+	public function callNewDef($args) {
+		/** @var Variable[] $args */
+		$args[1]->setIsConst();
+		return $this->callNewVar($args);
+	}
+
+	public function callMetaVar($args) {
+		/** @var Variable[] $args */
+		$name = $this->machine->toString($args[0]);
+		$value = $args[1];
+		if (!$value->isConst()) $value = $value->copy();
+		if (isset($this->vars[$name])) {
+			throw new ParseException(ParseException::DUPLICATE_NAME, $name);
+		}
+
+		$this->vars[$name] = $value;
+		return null;
+	}
+
+	public function callMetaDef($args) {
+		/** @var Variable[] $args */
+		$args[1]->setIsConst();
+		return $this->callMetaVar($args);
+	}
+
 	public function getMetaFunction() {
 		$result = $this->machine->makeExpression();
-		foreach (static::$funcs as $name => $def) {
-			$func = new FunctionProxy([$this, $def[0]], $def[1]);
-			$result->addVar($name, new Variable($func, true));
+		foreach ($this->vars as $name => $var) {
+			$result->addVar($name, $var);
 		}
 		return $result;
 	}

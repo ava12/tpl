@@ -145,6 +145,10 @@
   macros(l)
   include(name)
   require(name)
+  newvar(name, value)
+  newdef(name, value)
+  metavar(name, value)
+  metadef(name, value)
 
 регулярные выражения:
   regexp(re, mod?):

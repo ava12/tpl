@@ -25,7 +25,7 @@ class Context implements IVarContainer {
 		$this->functionDef = $functionDef;
 		$this->varIndex = array_flip($functionDef->varNames);
 		foreach ($functionDef->vars as $index => $var) {
-			$this->vars[$index] = $var->copy();
+			$this->vars[$index] = ($var->isConst() ? $var : $var->copy());
 		}
 
 		if (isset($this->varIndex[FunctionDef::THIS_NAME])) {

@@ -95,8 +95,7 @@ class Variable {
 	 * @return Variable
 	 */
 	public function copy() {
-		$value = $this->value;
-		if (!$this->isConstant) $value = $value->copy();
+		$value = $this->value->copy();
 		return new static($value);
 	}
 

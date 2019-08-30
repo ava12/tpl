@@ -79,7 +79,9 @@ class Config {
 					break;
 
 				case 'inputMask':
-					$this->inputMask = array_merge((array)$value, $this->inputMask);
+					if (strlen($value)) {
+						$this->inputMask = array_merge((array)$value, $this->inputMask);
+					}
 					break;
 			}
 		}

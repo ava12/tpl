@@ -37,3 +37,4 @@ assert(5, call(func, 4, baz))
 assert(3, baz.baz)
 assert(6, call(func, 5, @baz))
 assert(5, baz.baz)
+

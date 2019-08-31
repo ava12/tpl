@@ -6,3 +6,4 @@ baz: 'zab'
 assert('oof', foo)
 assert('rab', bar)
 assert('zab', baz)
+

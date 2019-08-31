@@ -30,3 +30,4 @@ assert({}, scalar())
 assert(false, scalar(false))
 assert('', scalar(''))
 assert(1, scalar(f))
+

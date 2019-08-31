@@ -57,3 +57,4 @@ assert(1, isconst(@mbar))
   assert(21, mvar)
   assert(1, isconst(@mvar))
 }\
+

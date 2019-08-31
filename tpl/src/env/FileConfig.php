@@ -51,3 +51,4 @@ class FileConfig {
 		$this->roots[] = [$name, $path, $perm];
 	}
 }
+

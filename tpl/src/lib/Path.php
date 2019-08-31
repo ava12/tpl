@@ -11,3 +11,4 @@ class Path {
 	public $exists = false;
 	public $perm = 0;
 }
+

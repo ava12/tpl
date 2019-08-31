@@ -18,3 +18,4 @@ assert(false, ^^())
 assert(false, ^^(false, false))
 assert(true, ^^(true, false))
 assert(false, ^^(true, true))
+

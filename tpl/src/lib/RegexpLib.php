@@ -189,3 +189,4 @@ class RegexpLib implements ILib {
 		return new Variable($result);
 	}
 }
+

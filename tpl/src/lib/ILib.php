@@ -9,3 +9,4 @@ interface ILib {
 	 */
 	public static function setup(\ava12\tpl\env\Env $env);
 }
+

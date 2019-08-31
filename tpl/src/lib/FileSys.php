@@ -236,3 +236,4 @@ class FileSys {
 		return ($path[0] . static::RS);
 	}
 }
+

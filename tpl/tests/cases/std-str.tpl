@@ -37,3 +37,4 @@ assert('baa', replace('foo', [: .o: 'a', 'c', .f: 'b', .{''}: 'd' :]))
 assert('baz', replace('foo', [: .o: 'z', .fo: 'ba' :]))
 assert('HI', replace('hi', [: .h: 'H', .i: 'I' :]))
 assert('ПрИвЕт', replace('привет', [: .е: "Е", .и: "И", .п: "П" :]))
+

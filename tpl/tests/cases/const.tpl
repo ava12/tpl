@@ -14,3 +14,4 @@ assert('13', bar)
 define baz: function () {
   var f: function() {}
 }
+

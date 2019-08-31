@@ -18,3 +18,4 @@ class MetaHandler extends AbstractStateHandler {
 		$this->parser->getMetaEnv()->runMetaFunction($this->func);
 	}
 }
+

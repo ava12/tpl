@@ -87,3 +87,4 @@ class DirObject extends AbstractFileDir {
 		return new Variable($result);
 	}
 }
+

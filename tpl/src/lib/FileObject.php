@@ -207,3 +207,4 @@ class FileObject extends AbstractFileDir {
 		return null;
 	}
 }
+

@@ -82,3 +82,4 @@ var func: pure function(v1, v2, k1, k2, i1, i2) {
   -(i1, i2)
 }
 assert(bar, sort(foo, func))
+

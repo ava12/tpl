@@ -293,3 +293,4 @@ assert(err.path, f.error())
 
 f: file('wd:foo.txt')
 assertPerm('rawd', f)
+

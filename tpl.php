@@ -55,6 +55,8 @@ try {
 		}
 	}
 
+	if ($cliConfig->testMode) echo PHP_EOL;
+
 } catch (\ava12\tpl\cli\ArgException $e) {
 	writeln($e->getMessage());
 	exit($e->getCode());
@@ -161,7 +163,7 @@ function runTest($srcName, $source) {
 		}
 
 		if ($expectedError and !$gotError) {
-			write(NL . $entry[2] . ': ожидается ошибка ' . $expectedError . ', код выполнен без ошибок' . NL);
+			write(PHP_EOL . $entry[2] . ': ожидается ошибка ' . $expectedError . ', код выполнен без ошибок' . PHP_EOL);
 			exit(3);
 		}
 

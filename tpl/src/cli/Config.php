@@ -6,6 +6,7 @@ use ava12\tpl\Util;
 
 /**
  * @property string|null $consoleEnc
+ * @property string $eol
  */
 class Config {
 	const WIN_CON_ENC = 'CP866';
@@ -15,6 +16,12 @@ class Config {
 	const SRC_CONFIG = 1;
 	const SRC_DIRECT = 2;
 
+	protected static $eols = [
+		'CR' => "\r",
+		'LF' => "\n",
+		'CRLF' => "\r\n",
+	];
+
 	protected $encSrc = self::SRC_DEFAULT;
 	protected $consoleEnc = null;
 	public $inputMask = [];
@@ -22,6 +29,7 @@ class Config {
 	public $outputSuffix = null;
 	public $stdout = false;
 	public $testMode = false;
+	protected $eol = null;
 
 	public function __construct() {
 		if (Util::isWindows()) {
@@ -37,6 +45,10 @@ class Config {
 				return $this->consoleEnc;
 				break;
 
+			case 'eol':
+				return (isset($this->eol) ? $this->eol : PHP_EOL);
+				break;
+
 			default:
 				throw new \RuntimeException('неизвестный параметр конфигурации: ' . $name);
 		}
@@ -49,6 +61,16 @@ class Config {
 					$this->consoleEnc = $value;
 					$this->encSrc = self::SRC_DIRECT;
 				}
+				break;
+
+			case 'eol':
+				$value = strtoupper($value);
+				if (isset(static::$eols[$value])) {
+					$value = static::$eols[$value];
+				} else {
+					$value = PHP_EOL;
+				}
+				$this->eol = $value;
 				break;
 
 			default:
@@ -82,6 +104,10 @@ class Config {
 					if (strlen($value)) {
 						$this->inputMask = array_merge((array)$value, $this->inputMask);
 					}
+					break;
+
+				case 'eol':
+					if (!isset($this->eol)) $this->__set('eol', $value);
 					break;
 			}
 		}

@@ -199,8 +199,8 @@ function runGen($name, $source) {
 		return;
 	}
 
-	if (PHP_EOL !== "\n") {
-		$text = str_replace("\n", PHP_EOL, $text);
+	if ($cliConfig->eol !== "\n") {
+		$text = str_replace("\n", $cliConfig->eol, $text);
 	}
 	if ($cliConfig->stdout) {
 		echo $text;

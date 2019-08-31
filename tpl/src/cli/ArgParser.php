@@ -20,6 +20,7 @@ class ArgParser {
 	const ARG_ENV = 'e';
 	const ARG_INI_NAME = 'i';
 	const ARG_NO_INI = 'I';
+	const ARG_EOL = 'l';
 	const ARG_FS_ENC = 'n';
 	const ARG_OUT_NAME = 'o';
 	const ARG_OUT_CON = 'O';
@@ -39,6 +40,7 @@ class ArgParser {
 		'  -e <имя>=<значение>  добавить переменную окружения',
 		'  -i <имя>             задать имя ini-файла, по умолчанию tpl.ini',
 		'  -I                   не использовать ini-файл',
+		'  -l <тип>             тип окончаний строк результата: CR, LF или CRLF',
 		'  -n <кодировка>       то же, что и -s file.nameEncoding=<кодировка>',
 		'  -o <имя>             имя каталога для вывода',
 		'  -O                   выводить результат на консоль',
@@ -56,6 +58,7 @@ class ArgParser {
 		self::ARG_ENV => [true, true, true],
 		self::ARG_INI_NAME => [true, false],
 		self::ARG_NO_INI => [false],
+		self::ARG_EOL => [true, false],
 		self::ARG_FS_ENC => [true, false],
 		self::ARG_OUT_NAME => [true, false],
 		self::ARG_OUT_CON => [false],
@@ -160,6 +163,7 @@ class ArgParser {
 		$config->outputDir = $args[self::ARG_OUT_NAME];
 		$config->outputSuffix = $args[self::ARG_OUT_EXT];
 		$config->stdout = $args[self::ARG_OUT_CON];
+		$config->eol = $args[self::ARG_EOL];
 	}
 
 	protected function readIni(array $args) {

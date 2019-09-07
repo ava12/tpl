@@ -21,6 +21,7 @@ class ArgParser {
 	const ARG_INI_NAME = 'i';
 	const ARG_NO_INI = 'I';
 	const ARG_EOL = 'l';
+	const ARG_USE_MASK = 'm';
 	const ARG_FS_ENC = 'n';
 	const ARG_OUT_NAME = 'o';
 	const ARG_OUT_CON = 'O';
@@ -41,6 +42,7 @@ class ArgParser {
 		'  -i <имя>             задать имя ini-файла, по умолчанию tpl.ini',
 		'  -I                   не использовать ini-файл',
 		'  -l <тип>             тип окончаний строк результата: CR, LF или CRLF',
+		'  -m                   подставлять имена файлов в INI-параметр inputMask',
 		'  -n <кодировка>       то же, что и -s file.nameEncoding=<кодировка>',
 		'  -o <имя>             имя каталога для вывода',
 		'  -O                   выводить результат на консоль',
@@ -59,6 +61,7 @@ class ArgParser {
 		self::ARG_INI_NAME => [true, false],
 		self::ARG_NO_INI => [false],
 		self::ARG_EOL => [true, false],
+		self::ARG_USE_MASK => [false],
 		self::ARG_FS_ENC => [true, false],
 		self::ARG_OUT_NAME => [true, false],
 		self::ARG_OUT_CON => [false],
@@ -158,11 +161,12 @@ class ArgParser {
 		}
 		$config->testMode = $args[self::ARG_TEST];
 		if ($args[self::ARG_FILES]) {
-			$config->inputMask = $args[self::ARG_FILES];
+			$config->consoleMask = $args[self::ARG_FILES];
 		}
 		$config->outputDir = $args[self::ARG_OUT_NAME];
 		$config->outputSuffix = $args[self::ARG_OUT_EXT];
 		$config->stdout = $args[self::ARG_OUT_CON];
+		$config->useMask = $args[self::ARG_USE_MASK];
 		$config->eol = $args[self::ARG_EOL];
 	}
 

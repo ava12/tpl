@@ -24,11 +24,13 @@ class Config {
 
 	protected $encSrc = self::SRC_DEFAULT;
 	protected $consoleEnc = null;
-	public $inputMask = [];
+	public $inputMask = null;
+	public $consoleMask = [];
 	public $outputDir = null;
 	public $outputSuffix = null;
 	public $stdout = false;
 	public $testMode = false;
+	public $useMask = false;
 	protected $eol = null;
 
 	public function __construct() {
@@ -97,13 +99,12 @@ class Config {
 
 				case 'stdout':
 				case 'testMode':
+				case 'useMask':
 					$this->$key = ($this->$key or (bool)$value);
 					break;
 
 				case 'inputMask':
-					if (strlen($value)) {
-						$this->inputMask = array_merge((array)$value, $this->inputMask);
-					}
+					$this->inputMask = $value;
 					break;
 
 				case 'eol':
@@ -119,5 +120,20 @@ class Config {
 
 	public function encodeCon($text) {
 		return ($this->consoleEnc ? mb_convert_encoding($text, $this->consoleEnc, 'UTF-8'): $text);
+	}
+
+	public function getInputMask () {
+		if (!$this->useMask or !$this->consoleMask) {
+			return (strlen($this->inputMask) ? [$this->inputMask] : $this->consoleMask);
+		} elseif (strpos($this->inputMask, '*') === false) {
+			return [];
+		}
+
+		$result = [];
+		$split = explode('*', $this->inputMask, 2);
+		foreach ($this->consoleMask as $subst) {
+			$result[] = $split[0] . $subst . $split[1];
+		}
+		return $result;
 	}
 }

@@ -25,7 +25,7 @@ try {
 
 	$fsEnc = $iniParser->getResult('files.nameEncoding');
 
-	foreach ($cliConfig->inputMask as $mask) {
+	foreach ($cliConfig->getInputMask() as $mask) {
 		if (isset($fsEnc)) {
 			$mask = mb_convert_encoding($mask, $fsEnc, ENCODING);
 		}

@@ -1,13 +1,6 @@
 @echo off
 dir > nul
 set XDEBUG_CONFIG="idekey=ava12.tpl"
-if "%1" == "" goto all
-
-php ..\..\tpl.php cases\%1.tpl
-goto end
-
-:all
-php ..\..\tpl.php cases\*.tpl
-
-:end
+rem php ..\..\tpl.php %1 %2 %3 %4 %5 %6 %7 %8 %9
+php ..\..\tpl.php %*
 echo.

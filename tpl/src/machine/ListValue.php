@@ -220,11 +220,10 @@ class ListValue implements IListValue {
 			}
 		}
 
-		$result = array_merge(
+		$this->value = array_merge(
 			array_slice($result, 0, $start),
 			$insert,
 			array_slice($result, $start)
 		);
-		return new ListValue($result);
 	}
 }

@@ -41,7 +41,6 @@ interface IListValue extends IValue, IVarContainer {
 	 * @param int|null $start
 	 * @param int|null $count
 	 * @param IListValue $insert
-	 * @return IListValue
 	 */
 	public function splice($start, $count, $insert);
 }

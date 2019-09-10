@@ -113,7 +113,7 @@
 списки:
   count(l)
   slice(l, start?, count?)
-  splice(l, start?, count?, insert?)
+  splice(@l, start?, count?, insert?)
   key(l, index)
   index(l, key)
   keys(l)

@@ -520,11 +520,22 @@ class StdLib implements ILib {
 	public function callSplice($args) {
 		/** @var Variable[] $args */
 		/** @var IListValue $list */
-		$list = $this->machine->toList($args[0])->getValue()->copy();
+		if ($args[0]->isConst()) {
+			throw new RunException(RunException::SET_CONST);
+		}
+
+//		var_dump($args[0]);
+		if (!$args[0]->isContainer()) {
+			$args[0]->setValue($this->machine->toList($args[0])->getValue());
+		}
+//		var_dump($args[0]);exit;
+
+		$list = $args[0]->getValue();
 		$start = ($args[1]->isNull() ? 1 : $this->machine->toInt($args[1]));
 		$count = ($args[2]->isNull() ? null : $this->machine->toInt($args[2]));
 		$insert = $this->machine->toList($args[3])->getValue();
-		return new Variable($list->splice($start, $count, $insert));
+		$list->splice($start, $count, $insert);
+		return null;
 	}
 
 	// key(l, index)

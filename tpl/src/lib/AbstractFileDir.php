@@ -114,7 +114,7 @@ abstract class AbstractFileDir implements IListValue {
 	}
 
 	public function splice($start, $count, $insert) {
-		return $this->memberList->splice($start, $count, $insert);
+		$this->memberList->splice($start, $count, $insert);
 	}
 
 	public function makeVar() {

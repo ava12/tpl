@@ -20,13 +20,22 @@ assert([: .c: 1, .d: 8 :], slice(foo, .count: 2, .start: 3))
 assert([: .d: 8 :], slice(foo, 0, 10))
 assert([: .a: 2, .b: 7 :], slice(foo, -6, 5))
 
-assert([::], splice())
-assert(foo, splice(foo))
-assert(foo, splice(foo, 2))
-assert([: .a: 2, .c: 1, .d: 8 :], splice(foo, 2, 1))
-assert([: .a: 2, .e: 'e', .c: 1, .d: 8 :], splice(foo, 2, .insert: [: .e: 'e' :]))
-assert([: .e: 'e', .c: 1, .d: 8 :], splice(foo, -5, 4, [: .e: 'e' :]))
-assert([: .a: 2, .b: 7, .e: 'e' :], splice(foo, 3, 4, [: .e: 'e' :]))
+var bar: [: 1, 2, 3 :]
+splice(@bar, 2, 1, 4)
+assert([: 1, 4, 3 :], bar)
+
+define resplice: function (list, start, cnt, insert) {
+  splice(@list, start, cnt, insert)
+  return list
+}
+
+assert([::], resplice())
+assert(foo, resplice(foo))
+assert(foo, resplice(foo, 2))
+assert([: .a: 2, .c: 1, .d: 8 :], resplice(foo, 2, 1))
+assert([: .a: 2, .e: 'e', .c: 1, .d: 8 :], resplice(foo, 2, .insert: [: .e: 'e' :]))
+assert([: .e: 'e', .c: 1, .d: 8 :], resplice(foo, -5, 4, [: .e: 'e' :]))
+assert([: .a: 2, .b: 7, .e: 'e' :], resplice(foo, 3, 4, [: .e: 'e' :]))
 
 foo: [: 3, .b: 1, .c: 4, 1 :]
 
@@ -59,7 +68,7 @@ assert([::], values())
 assert([::], values([::]))
 assert([: 3, 1, 4, 1 :], values(foo))
 
-var bar: [: 'a', 'b', 'a' :]
+bar: [: 'a', 'b', 'a' :]
 assert([::], combine())
 assert([::], combine([::], [::]))
 assert([: .a: 4, .b: 1, 1 :], combine(bar, foo))

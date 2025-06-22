@@ -66,7 +66,7 @@ class Config {
 				break;
 
 			case 'eol':
-				$value = strtoupper($value);
+				$value = strtoupper((string)$value);
 				if (isset(static::$eols[$value])) {
 					$value = static::$eols[$value];
 				} else {

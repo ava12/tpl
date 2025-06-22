@@ -70,7 +70,7 @@ class FileSys {
 	}
 
 	public function encodeName($name) {
-		if (isset($this->nameEncoding)) {
+		if ($this->nameEncoding) {
 			$name = mb_convert_encoding($name, $this->nameEncoding);
 		}
 		return $name;
